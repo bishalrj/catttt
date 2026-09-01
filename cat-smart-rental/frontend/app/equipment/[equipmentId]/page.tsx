@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { EquipmentActions } from "@/components/equipment/EquipmentActions";
 import { CheckoutForm } from "@/components/equipment/CheckoutForm";
 import { CheckinForm } from "@/components/equipment/CheckinForm";
+import { LiveGaugeCluster } from "@/components/telemetry/LiveGaugeCluster";
 
 const STATUS_BADGE: Record<string, { label: string; className: string }> = {
   AVAILABLE: { label: "AVAILABLE", className: "cat-badge cat-badge-available" },
@@ -28,7 +29,7 @@ export default async function EquipmentDetailsPage({ params }: { params: Promise
     const badge = STATUS_BADGE[eq.status] || { label: eq.status, className: "cat-badge cat-badge-low" };
 
     return (
-      <div className="max-w-6xl mx-auto space-y-6 cat-page-enter">
+      <div className="max-w-7xl mx-auto space-y-8 cat-page-enter">
         <Link href="/equipment" className="text-xs uppercase font-bold tracking-wider text-[#94a3b8] hover:text-[#ffcd11] flex items-center gap-1.5 w-fit transition-colors">
           <ArrowLeft className="h-3.5 w-3.5" /> Back to Fleet Telematics
         </Link>
@@ -57,7 +58,7 @@ export default async function EquipmentDetailsPage({ params }: { params: Promise
           <div className="flex items-center gap-2.5">
             <Link
               href={`/equipment/${eq.equipment_id}/lifecycle`}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#ffcd11] bg-[#ffcd11]/10 hover:bg-[#ffcd11]/20 border border-[#ffcd11]/30 px-3 py-2 rounded transition-colors uppercase tracking-wider"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#ffcd11] bg-[#ffcd11]/10 hover:bg-[#ffcd11]/20 border border-[#ffcd11]/30 px-3.5 py-2 rounded transition-colors uppercase tracking-wider"
             >
               <Activity className="w-4 h-4" />
               Lifecycle &amp; ROI
@@ -66,27 +67,34 @@ export default async function EquipmentDetailsPage({ params }: { params: Promise
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* REAL-TIME DIGITAL TWIN SENSOR GAUGES */}
+        <LiveGaugeCluster
+          equipmentId={eq.equipment_id}
+          equipmentType={eq.equipment_type}
+          status={eq.status}
+        />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* MAIN TELEMETRY AND STATUS */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             
             {/* TELEMETRY METRICS ROW */}
-            <div className="grid grid-cols-3 gap-3.5">
-              <div className="cat-card p-4 border-l-4 border-l-[#ffcd11]">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="cat-card p-5 border-l-4 border-l-[#ffcd11]">
                 <p className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider mb-1">Engine Run</p>
                 <div className="flex items-baseline gap-1">
                   <span className="text-2xl font-black text-white font-mono">{eq.engine_hours_per_day.toFixed(1)}</span>
                   <span className="text-[10px] font-mono text-[#64748b]">h/d</span>
                 </div>
               </div>
-              <div className="cat-card p-4 border-l-4 border-l-amber-500">
+              <div className="cat-card p-5 border-l-4 border-l-amber-500">
                 <p className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider mb-1">Idle Time</p>
                 <div className="flex items-baseline gap-1">
                   <span className="text-2xl font-black text-white font-mono">{eq.idle_hours_per_day.toFixed(1)}</span>
                   <span className="text-[10px] font-mono text-[#64748b]">h/d</span>
                 </div>
               </div>
-              <div className="cat-card p-4 border-l-4 border-l-emerald-500">
+              <div className="cat-card p-5 border-l-4 border-l-emerald-500">
                 <p className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider mb-1">Utilisation</p>
                 <div className="flex items-baseline gap-1">
                   <span className="text-2xl font-black text-[#ffcd11] font-mono">{utilization.toFixed(1)}</span>
@@ -96,8 +104,8 @@ export default async function EquipmentDetailsPage({ params }: { params: Promise
             </div>
 
             {/* STATUS PANELS */}
-            <div className="grid grid-cols-2 gap-3.5">
-              <div className="cat-card p-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="cat-card p-5">
                 <h3 className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider mb-2">Job Site Location</h3>
                 <div className="flex items-center gap-3">
                   <div className="bg-[#12161c] p-2.5 rounded border border-[#262d38] text-[#ffcd11]">
@@ -109,7 +117,7 @@ export default async function EquipmentDetailsPage({ params }: { params: Promise
                   </div>
                 </div>
               </div>
-              <div className="cat-card p-4">
+              <div className="cat-card p-5">
                 <h3 className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider mb-2">Operator Assignment</h3>
                 <div className="flex items-center gap-3">
                   <div className="bg-[#12161c] p-2.5 rounded border border-[#262d38] text-white">
@@ -125,26 +133,26 @@ export default async function EquipmentDetailsPage({ params }: { params: Promise
 
             {/* USAGE & FUEL */}
             <div className="cat-card overflow-hidden">
-              <div className="px-5 py-3 border-b border-[#262d38] bg-[#11151b] flex items-center gap-2">
+              <div className="px-6 py-4 border-b border-[#262d38] bg-[#11151b] flex items-center gap-2">
                 <Fuel className="w-4 h-4 text-[#ffcd11]" />
                 <h3 className="text-xs font-black text-white uppercase tracking-wider">
                   VisionLink Fuel &amp; Engine Telemetry
                 </h3>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4">
-                <div className="bg-[#12161c] p-3 rounded border border-[#262d38]">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5">
+                <div className="bg-[#12161c] p-3.5 rounded border border-[#262d38]">
                   <p className="text-[10px] font-bold text-[#64748b] uppercase mb-0.5">Fuel Burn</p>
                   <p className="text-base font-bold text-white font-mono">{usageSummary.total_fuel_liters.toFixed(1)} <span className="text-[10px] text-[#64748b]">L</span></p>
                 </div>
-                <div className="bg-[#12161c] p-3 rounded border border-[#262d38]">
+                <div className="bg-[#12161c] p-3.5 rounded border border-[#262d38]">
                   <p className="text-[10px] font-bold text-[#64748b] uppercase mb-0.5">Operating Hours</p>
                   <p className="text-base font-bold text-white font-mono">{usageSummary.total_operating_hours.toFixed(1)} <span className="text-[10px] text-[#64748b]">h</span></p>
                 </div>
-                <div className="bg-[#12161c] p-3 rounded border border-[#262d38]">
+                <div className="bg-[#12161c] p-3.5 rounded border border-[#262d38]">
                   <p className="text-[10px] font-bold text-[#64748b] uppercase mb-0.5">Downtime</p>
                   <p className="text-base font-bold text-white font-mono">{usageSummary.total_downtime_hours.toFixed(1)} <span className="text-[10px] text-[#64748b]">h</span></p>
                 </div>
-                <div className="bg-[#12161c] p-3 rounded border border-[#262d38]">
+                <div className="bg-[#12161c] p-3.5 rounded border border-[#262d38]">
                   <p className="text-[10px] font-bold text-[#64748b] uppercase mb-0.5">Daily Idle Avg</p>
                   <p className="text-base font-bold text-white font-mono">{usageSummary.avg_daily_idle_hours.toFixed(1)} <span className="text-[10px] text-[#64748b]">h</span></p>
                 </div>
@@ -187,7 +195,7 @@ export default async function EquipmentDetailsPage({ params }: { params: Promise
 
             {/* RENTAL HISTORY TABLE */}
             <div className="cat-card overflow-hidden">
-              <div className="px-5 py-3 border-b border-[#262d38] bg-[#11151b] flex items-center gap-2">
+              <div className="px-6 py-4 border-b border-[#262d38] bg-[#11151b] flex items-center gap-2">
                 <Clock className="w-4 h-4 text-[#ffcd11]" />
                 <h3 className="text-xs font-black text-white uppercase tracking-wider">
                   Asset Assignment History
@@ -217,7 +225,7 @@ export default async function EquipmentDetailsPage({ params }: { params: Promise
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan={4} className="py-8 text-center text-[#64748b] text-xs">
+                        <td colSpan={4} className="py-10 text-center text-[#64748b] text-xs">
                           No assignment history found.
                         </td>
                       </tr>
@@ -230,7 +238,7 @@ export default async function EquipmentDetailsPage({ params }: { params: Promise
 
           {/* RIGHT SIDEBAR - Action Forms */}
           <div className="lg:col-span-1">
-            <div className="cat-card p-5 h-full">
+            <div className="cat-card p-6 h-full">
               {eq.status === "AVAILABLE" ? (
                 <CheckoutForm equipmentId={eq.equipment_id} />
               ) : eq.status === "ACTIVE" ? (
@@ -252,7 +260,7 @@ export default async function EquipmentDetailsPage({ params }: { params: Promise
     );
   } catch (error) {
     return (
-      <div className="max-w-4xl mx-auto p-8 text-center bg-[#151a21] rounded-lg border border-red-500/40">
+      <div className="max-w-4xl mx-auto p-10 text-center bg-[#151a21] rounded-lg border border-red-500/40">
         <h2 className="text-xl font-bold text-red-400 mb-2">Error Loading Equipment Details</h2>
         <p className="text-[#94a3b8] text-xs">Equipment not found or API is unreachable.</p>
         <Link href="/equipment" className="text-[#ffcd11] hover:underline mt-4 inline-block font-mono text-xs">Return to list</Link>

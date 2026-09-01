@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Truck, LineChart, Bell, History, Bot, ChevronRight, Activity } from "lucide-react";
+import { LayoutDashboard, Truck, LineChart, Bell, History, Bot, ChevronRight, Map, Activity, Wrench } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/map", label: "GIS Fleet Map", icon: Map },
   { href: "/equipment", label: "Fleet Telematics", icon: Truck },
   { href: "/rentals", label: "Rental Operations", icon: History },
   { href: "/analytics", label: "Demand Analytics", icon: LineChart },
