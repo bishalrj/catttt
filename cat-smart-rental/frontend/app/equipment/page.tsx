@@ -1,7 +1,7 @@
 import { getEquipmentList } from "@/lib/api";
 import Link from "next/link";
 import { EquipmentRowActions } from "@/components/equipment/EquipmentRowActions";
-import { Truck, Box, Cpu, Activity, ShieldCheck } from "lucide-react";
+import { Truck, Box, Cpu, Activity } from "lucide-react";
 
 const STATUS_BADGE: Record<string, { label: string; className: string }> = {
   AVAILABLE: { label: "AVAILABLE", className: "cat-badge cat-badge-available" },
@@ -15,26 +15,26 @@ export default async function EquipmentPage() {
     const equipment = await getEquipmentList();
 
     return (
-      <div className="max-w-7xl mx-auto space-y-6 cat-page-enter">
+      <div className="max-w-7xl mx-auto space-y-8 cat-page-enter">
         {/* Header */}
-        <div className="cat-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="cat-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
             <h1 className="cat-section-heading text-xl">
               Cat Fleet <span className="accent">Telematics</span>
             </h1>
-            <p className="text-[#94a3b8] text-xs mt-1">
+            <p className="text-[#94a3b8] text-xs sm:text-sm mt-1">
               Industrial machinery telemetry, operational statuses, and lifecycle command oversight
             </p>
           </div>
-          <div className="flex items-center gap-2.5">
-            <span className="text-xs font-mono font-bold text-[#ffcd11] bg-[#12161c] px-3 py-1.5 rounded border border-[#262d38]">
-              {equipment.length} ASSETS LOGGED
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-mono font-bold text-[#ffcd11] bg-[#12161c] px-3.5 py-2 rounded border border-[#262d38]">
+              {equipment.length} ASSETS MONITORED
             </span>
           </div>
         </div>
 
         {/* Equipment Table Card */}
-        <div className="cat-card overflow-hidden">
+        <div className="cat-card overflow-hidden shadow-lg">
           <div className="overflow-x-auto">
             <table className="cat-table">
               <thead>
@@ -54,7 +54,7 @@ export default async function EquipmentPage() {
               <tbody>
                 {equipment.length === 0 ? (
                   <tr>
-                    <td colSpan={10} className="py-12 text-center text-[#64748b]">
+                    <td colSpan={10} className="py-16 text-center text-[#64748b]">
                       <Box className="w-8 h-8 mx-auto mb-2 text-[#323b49]" />
                       No equipment fleet records found.
                     </td>
@@ -67,7 +67,7 @@ export default async function EquipmentPage() {
                         <td className="font-bold">
                           <Link
                             href={`/equipment/${eq.equipment_id}`}
-                            className="text-[#ffcd11] hover:underline inline-flex items-center gap-1.5 font-mono text-xs"
+                            className="text-[#ffcd11] hover:underline inline-flex items-center gap-2 font-mono text-xs"
                           >
                             <Cpu className="w-3.5 h-3.5 text-[#64748b]" />
                             {eq.equipment_id}
@@ -103,7 +103,7 @@ export default async function EquipmentPage() {
                         <td className="text-center">
                           <Link
                             href={`/equipment/${eq.equipment_id}/lifecycle`}
-                            className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#ffcd11] bg-[#ffcd11]/10 hover:bg-[#ffcd11]/20 border border-[#ffcd11]/30 px-2.5 py-1 rounded transition-colors uppercase tracking-wider"
+                            className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#ffcd11] bg-[#ffcd11]/10 hover:bg-[#ffcd11]/20 border border-[#ffcd11]/30 px-3 py-1.5 rounded transition-colors uppercase tracking-wider"
                           >
                             <Activity className="w-3 h-3" /> ROI
                           </Link>
@@ -123,7 +123,7 @@ export default async function EquipmentPage() {
     );
   } catch (error) {
     return (
-      <div className="max-w-4xl mx-auto p-8 text-center bg-[#151a21] rounded-lg border border-red-500/40">
+      <div className="max-w-4xl mx-auto p-10 text-center bg-[#151a21] rounded-lg border border-red-500/40">
         <h2 className="text-xl font-bold text-red-400 mb-2">Error Loading Fleet</h2>
         <p className="text-[#94a3b8] text-xs">Could not connect to fleet API.</p>
       </div>

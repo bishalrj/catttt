@@ -1,33 +1,33 @@
 import { getRentals } from "@/lib/api";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Clock, Activity, Box, Calendar, Truck } from "lucide-react";
+import { Box, Calendar, Truck } from "lucide-react";
 
 export default async function RentalsPage() {
   try {
     const rentals = await getRentals();
 
     return (
-      <div className="max-w-7xl mx-auto space-y-6 cat-page-enter">
+      <div className="max-w-7xl mx-auto space-y-8 cat-page-enter">
         {/* Header */}
-        <div className="cat-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="cat-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
             <h1 className="cat-section-heading text-xl">
               Rental <span className="accent">Operations</span>
             </h1>
-            <p className="text-[#94a3b8] text-xs mt-1">
+            <p className="text-[#94a3b8] text-xs sm:text-sm mt-1">
               Historical equipment deployments, checkout telemetry, and active field assignments
             </p>
           </div>
           <div>
-            <span className="text-xs font-mono font-bold text-[#ffcd11] bg-[#12161c] px-3 py-1.5 rounded border border-[#262d38]">
+            <span className="text-xs font-mono font-bold text-[#ffcd11] bg-[#12161c] px-3.5 py-2 rounded border border-[#262d38]">
               {rentals.length} OPERATIONS LOGGED
             </span>
           </div>
         </div>
 
         {/* Table Card */}
-        <div className="cat-card overflow-hidden">
+        <div className="cat-card overflow-hidden shadow-lg">
           <div className="overflow-x-auto">
             <table className="cat-table">
               <thead>
@@ -46,7 +46,7 @@ export default async function RentalsPage() {
               <tbody>
                 {rentals.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="py-12 text-center text-[#64748b]">
+                    <td colSpan={9} className="py-16 text-center text-[#64748b]">
                       <Box className="w-8 h-8 mx-auto mb-2 text-[#323b49]" />
                       No rental operations found.
                     </td>
@@ -70,7 +70,7 @@ export default async function RentalsPage() {
                         <td className="text-[#94a3b8] text-xs font-mono">{rental.operator_id}</td>
                         <td className="text-[#94a3b8] text-xs font-mono">
                           {rental.checkout_time ? (
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-2">
                               <Calendar className="w-3.5 h-3.5 text-[#64748b]" />
                               {format(new Date(rental.checkout_time), "MM/dd/yy HH:mm")}
                             </div>
@@ -78,7 +78,7 @@ export default async function RentalsPage() {
                         </td>
                         <td className="text-[#94a3b8] text-xs font-mono">
                           {rental.checkin_time ? (
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-2">
                               <Calendar className="w-3.5 h-3.5 text-[#64748b]" />
                               {format(new Date(rental.checkin_time), "MM/dd/yy HH:mm")}
                             </div>
@@ -118,7 +118,7 @@ export default async function RentalsPage() {
     );
   } catch (error) {
     return (
-      <div className="max-w-4xl mx-auto p-8 text-center bg-[#151a21] rounded-lg border border-red-500/40">
+      <div className="max-w-4xl mx-auto p-10 text-center bg-[#151a21] rounded-lg border border-red-500/40">
         <h2 className="text-xl font-bold text-red-400 mb-2">Error Loading Operations</h2>
         <p className="text-[#94a3b8] text-xs">Could not connect to telemetry feed.</p>
       </div>
