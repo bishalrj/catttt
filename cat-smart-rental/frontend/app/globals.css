@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #1a1a1a;
+  --background: #0f1216;
+  --foreground: #f3f4f6;
 }
 
 @theme inline {
@@ -11,344 +11,279 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* RentoMojo-inspired Design Tokens */
-  /* Backgrounds */
-  --color-rm-white: #ffffff;
-  --color-rm-surface: #f5f5f5;
-  --color-rm-surface-hover: #eeeeee;
-  --color-rm-card: #ffffff;
-  --color-rm-border: #e8e8e8;
-  --color-rm-border-light: #f0f0f0;
+  /* Caterpillar & Cat VisionLink Official Palette */
+  /* Trademark Cat Yellow */
+  --color-cat-yellow: #ffcd11;
+  --color-cat-yellow-hover: #e5b700;
+  --color-cat-yellow-light: rgba(255, 205, 17, 0.12);
+  --color-cat-yellow-border: rgba(255, 205, 17, 0.35);
 
-  /* Primary Red */
-  --color-rm-red: #e63329;
-  --color-rm-red-hover: #c9271e;
-  --color-rm-red-light: #fde8e7;
-  --color-rm-red-mid: #f5c6c4;
+  /* Cat Industrial Dark & Surfaces (VisionLink Telematics) */
+  --color-cat-black: #0b0d10;
+  --color-cat-dark: #12161c;
+  --color-cat-surface: #181d24;
+  --color-cat-surface-hover: #202630;
+  --color-cat-card: #151a21;
+  --color-cat-border: #262d38;
+  --color-cat-border-light: #323b49;
 
-  /* Text */
-  --color-rm-text-primary: #1a1a1a;
-  --color-rm-text-secondary: #555555;
-  --color-rm-text-muted: #888888;
-  --color-rm-text-placeholder: #aaaaaa;
+  /* Text Hierarchy */
+  --color-cat-text-primary: #f8fafc;
+  --color-cat-text-secondary: #94a3b8;
+  --color-cat-text-muted: #64748b;
 
-  /* Status */
-  --color-rm-green: #1a9e5f;
-  --color-rm-green-light: #e8f7ef;
-  --color-rm-amber: #d97706;
-  --color-rm-amber-light: #fef3c7;
-  --color-rm-blue: #2563eb;
-  --color-rm-blue-light: #eff6ff;
-  --color-rm-purple: #7c3aed;
-  --color-rm-purple-light: #f5f3ff;
-
-  /* Legacy graphite (kept for transition safety, maps to light equivalents) */
-  --color-graphite-950: #f5f5f5;
-  --color-graphite-900: #ffffff;
-  --color-graphite-800: #f8f8f8;
-  --color-graphite-700: #e8e8e8;
-  --color-industrial-yellow: #e63329;
-  --color-industrial-yellow-hover: #c9271e;
+  /* VisionLink Status & Telemetry Indicators */
+  --color-cat-green: #10b981;
+  --color-cat-green-light: rgba(16, 185, 129, 0.12);
+  --color-cat-amber: #f59e0b;
+  --color-cat-amber-light: rgba(245, 158, 11, 0.12);
+  --color-cat-red: #ef4444;
+  --color-cat-red-light: rgba(239, 68, 68, 0.12);
+  --color-cat-blue: #38bdf8;
+  --color-cat-blue-light: rgba(56, 189, 248, 0.12);
+  --color-cat-purple: #a855f7;
+  --color-cat-purple-light: rgba(168, 85, 247, 0.12);
 }
 
 body {
-  background: #f5f5f5;
-  color: #1a1a1a;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0f1216;
+  color: #f3f4f6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Global Scrollbar ─────────────────────────────────────────────────────── */
+/* ── VisionLink Scrollbars ────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #f5f5f5; }
-::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #b0b0b0; }
+::-webkit-scrollbar-track { background: #0f1216; }
+::-webkit-scrollbar-thumb { background: #262d38; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #ffcd11; }
 
-/* ── RentoMojo Section Heading Style ─────────────────────────────────────── */
-.rm-section-heading {
-  font-size: 1.5rem;
+/* ── Cat Trademark Section Heading ────────────────────────────────────────── */
+.cat-section-heading {
+  font-size: 1.35rem;
   font-weight: 800;
-  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #f8fafc;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  letter-spacing: -0.02em;
 }
-.rm-section-heading .accent {
-  color: #e63329;
+.cat-section-heading .accent {
+  color: #ffcd11;
 }
-.rm-section-heading::after {
+.cat-section-heading::after {
   content: '';
   display: inline-block;
-  width: 2rem;
+  width: 1.75rem;
   height: 3px;
-  background: #e63329;
-  border-radius: 2px;
-  margin-left: 0.25rem;
+  background: #ffcd11;
+  border-radius: 1px;
+  margin-left: 0.35rem;
 }
 
-/* ── Card base ────────────────────────────────────────────────────────────── */
-.rm-card {
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 12px;
-  transition: box-shadow 0.2s ease, transform 0.15s ease;
+/* ── VisionLink Card Base ─────────────────────────────────────────────────── */
+.cat-card {
+  background: #151a21;
+  border: 1px solid #262d38;
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
-.rm-card:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transform: translateY(-1px);
-}
-
-/* ── Category pill card ───────────────────────────────────────────────────── */
-.rm-category-card {
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 12px;
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.rm-category-card:hover {
-  border-color: #e63329;
-  box-shadow: 0 0 0 1px #e63329;
+.cat-card:hover {
+  border-color: #3b4554;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* ── Product card ─────────────────────────────────────────────────────────── */
-.rm-product-card {
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: box-shadow 0.2s ease, transform 0.15s ease;
-}
-.rm-product-card:hover {
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-}
-.rm-product-card .rm-card-image {
-  background: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 180px;
+/* ── Cat VisionLink Stat Metric ───────────────────────────────────────────── */
+.cat-stat-card {
+  background: #151a21;
+  border: 1px solid #262d38;
+  border-radius: 8px;
+  padding: 1.15rem 1.25rem;
+  position: relative;
   overflow: hidden;
 }
-.rm-product-card .rm-card-body {
-  padding: 0.75rem 1rem;
+.cat-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: #262d38;
+  transition: background 0.2s ease;
 }
-.rm-product-card .rm-card-name {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  line-height: 1.3;
-  margin-bottom: 0.25rem;
+.cat-stat-card:hover::before {
+  background: #ffcd11;
 }
-.rm-product-card .rm-card-price-label {
-  font-size: 0.7rem;
-  color: #888888;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.rm-product-card .rm-card-price {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1a1a1a;
-}
-.rm-product-card .rm-card-cta {
-  border-top: 1px solid #f0f0f0;
-  padding: 0.6rem 1rem;
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #e63329;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-.rm-product-card .rm-card-cta:hover {
-  background: #fde8e7;
-}
-
-/* ── Buttons ──────────────────────────────────────────────────────────────── */
-.rm-btn-primary {
-  background: #e63329;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  padding: 0.6rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-.rm-btn-primary:hover { background: #c9271e; }
-.rm-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.rm-btn-secondary {
-  background: #ffffff;
-  color: #e63329;
-  border: 1.5px solid #e63329;
-  border-radius: 8px;
-  padding: 0.6rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-.rm-btn-secondary:hover { background: #fde8e7; }
-
-.rm-btn-ghost {
-  background: transparent;
-  color: #555555;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-.rm-btn-ghost:hover { border-color: #e63329; color: #e63329; background: #fde8e7; }
-
-/* ── Status badges ────────────────────────────────────────────────────────── */
-.rm-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-.rm-badge-available { background: #e8f7ef; color: #1a9e5f; }
-.rm-badge-active    { background: #eff6ff; color: #2563eb; }
-.rm-badge-overdue   { background: #fde8e7; color: #e63329; }
-.rm-badge-maintenance { background: #fef3c7; color: #d97706; }
-.rm-badge-high      { background: #fde8e7; color: #e63329; }
-.rm-badge-medium    { background: #fef3c7; color: #d97706; }
-.rm-badge-low       { background: #f5f5f5; color: #888888; }
-
-/* ── Input / Search ───────────────────────────────────────────────────────── */
-.rm-input {
-  width: 100%;
-  background: #f5f5f5;
-  border: 1.5px solid #e8e8e8;
-  border-radius: 8px;
-  padding: 0.6rem 0.875rem;
-  font-size: 0.875rem;
-  color: #1a1a1a;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-.rm-input:focus {
-  border-color: #e63329;
-  box-shadow: 0 0 0 3px rgba(230, 51, 41, 0.08);
-  background: #ffffff;
-}
-.rm-input::placeholder { color: #aaaaaa; }
-
-/* ── Table ────────────────────────────────────────────────────────────────── */
-.rm-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-.rm-table th {
-  text-align: left;
-  padding: 0.75rem 1rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #888888;
-  border-bottom: 2px solid #f0f0f0;
-  background: #fafafa;
-}
-.rm-table td {
-  padding: 0.875rem 1rem;
-  border-bottom: 1px solid #f5f5f5;
-  color: #1a1a1a;
-  vertical-align: middle;
-}
-.rm-table tr:hover td { background: #fafafa; }
-.rm-table tr:last-child td { border-bottom: none; }
-
-/* ── KPI Stat Card ────────────────────────────────────────────────────────── */
-.rm-stat-card {
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 12px;
-  padding: 1.25rem 1.5rem;
-  transition: box-shadow 0.2s ease;
-}
-.rm-stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-.rm-stat-card .rm-stat-label {
+.cat-stat-card .cat-stat-label {
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #888888;
-  margin-bottom: 0.5rem;
+  color: #94a3b8;
+  margin-bottom: 0.4rem;
 }
-.rm-stat-card .rm-stat-value {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #1a1a1a;
+.cat-stat-card .cat-stat-value {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: #f8fafc;
   line-height: 1;
-  letter-spacing: -0.04em;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: -0.02em;
 }
 
-/* ── Page header bar ──────────────────────────────────────────────────────── */
-.rm-page-header {
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+/* ── Cat VisionLink Buttons ──────────────────────────────────────────────── */
+.cat-btn-primary {
+  background: #ffcd11;
+  color: #0b0d10;
+  border: none;
+  border-radius: 4px;
+  padding: 0.55rem 1.2rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.cat-btn-primary:hover {
+  background: #e5b700;
+  box-shadow: 0 0 12px rgba(255, 205, 17, 0.4);
+}
+.cat-btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-/* ── Alert / insight panel ────────────────────────────────────────────────── */
-.rm-alert-panel {
-  border-radius: 10px;
-  padding: 0.875rem 1.125rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  font-size: 0.875rem;
+.cat-btn-secondary {
+  background: #181d24;
+  color: #ffcd11;
+  border: 1px solid rgba(255, 205, 17, 0.4);
+  border-radius: 4px;
+  padding: 0.55rem 1.2rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
-.rm-alert-panel.red   { background: #fde8e7; border: 1px solid #f5c6c4; color: #c9271e; }
-.rm-alert-panel.amber { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; }
-.rm-alert-panel.green { background: #e8f7ef; border: 1px solid #a7f3d0; color: #065f46; }
-.rm-alert-panel.blue  { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
-.rm-alert-panel.purple { background: #f5f3ff; border: 1px solid #ddd6fe; color: #5b21b6; }
+.cat-btn-secondary:hover {
+  background: rgba(255, 205, 17, 0.1);
+  border-color: #ffcd11;
+}
 
-/* ── Smooth page transitions ──────────────────────────────────────────────── */
-@keyframes rm-fade-in {
-  from { opacity: 0; transform: translateY(6px); }
+.cat-btn-ghost {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #262d38;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.cat-btn-ghost:hover {
+  border-color: #ffcd11;
+  color: #ffcd11;
+  background: rgba(255, 205, 17, 0.08);
+}
+
+/* ── VisionLink Telemetry Status Badges ───────────────────────────────────── */
+.cat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+.cat-badge-available { background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.35); }
+.cat-badge-active    { background: rgba(255, 205, 17, 0.15); color: #ffcd11; border-color: rgba(255, 205, 17, 0.4); }
+.cat-badge-overdue   { background: rgba(239, 68, 68, 0.18); color: #f87171; border-color: rgba(239, 68, 68, 0.4); }
+.cat-badge-maintenance { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); }
+.cat-badge-high      { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-color: rgba(239, 68, 68, 0.45); }
+.cat-badge-medium    { background: rgba(245, 158, 11, 0.18); color: #fcd34d; border-color: rgba(245, 158, 11, 0.4); }
+.cat-badge-low       { background: rgba(100, 116, 139, 0.2); color: #cbd5e1; border-color: rgba(100, 116, 139, 0.35); }
+
+/* ── VisionLink Industrial Inputs ─────────────────────────────────────────── */
+.cat-input {
+  width: 100%;
+  background: #12161c;
+  border: 1px solid #262d38;
+  border-radius: 4px;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.85rem;
+  color: #f8fafc;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.cat-input:focus {
+  border-color: #ffcd11;
+  box-shadow: 0 0 0 2px rgba(255, 205, 17, 0.15);
+  background: #181d24;
+}
+.cat-input::placeholder { color: #64748b; }
+
+/* ── VisionLink Data Table ────────────────────────────────────────────────── */
+.cat-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.cat-table th {
+  text-align: left;
+  padding: 0.7rem 1rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  border-bottom: 1px solid #262d38;
+  background: #11151b;
+}
+.cat-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #1a2029;
+  color: #f1f5f9;
+  vertical-align: middle;
+}
+.cat-table tr:hover td { background: #1a2029; }
+.cat-table tr:last-child td { border-bottom: none; }
+
+/* ── Page Header Bar ──────────────────────────────────────────────────────── */
+.cat-page-header {
+  background: #151a21;
+  border: 1px solid #262d38;
+  border-radius: 8px;
+  padding: 1.4rem 1.6rem;
+  position: relative;
+  overflow: hidden;
+}
+.cat-page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #ffcd11;
+}
+
+/* ── Fade Animation ───────────────────────────────────────────────────────── */
+@keyframes cat-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.rm-page-enter { animation: rm-fade-in 0.25s ease forwards; }
-
-/* ── Sidebar active indicator ─────────────────────────────────────────────── */
-.rm-nav-active {
-  background: #fde8e7;
-  color: #e63329;
-  border-left-color: #e63329 !important;
-}
-
-/* ── Accent line separator ────────────────────────────────────────────────── */
-.rm-divider {
-  height: 1px;
-  background: #f0f0f0;
-  margin: 1rem 0;
-}
+.cat-page-enter { animation: cat-fade-in 0.2s ease forwards; }

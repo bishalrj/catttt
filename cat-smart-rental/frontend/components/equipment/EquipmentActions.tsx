@@ -42,7 +42,7 @@ export function EquipmentActions({ equipmentId, status }: EquipmentActionsProps)
         engine_hours_start: parseFloat(startHours)
       });
       setIsCheckoutOpen(false);
-      router.refresh(); // Refresh the page to show new status
+      router.refresh();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -74,55 +74,55 @@ export function EquipmentActions({ equipmentId, status }: EquipmentActionsProps)
     <div className="flex gap-2 items-center">
       <button 
         onClick={() => setIsQROpen(true)}
-        className="px-4 py-2 border border-graphite-700 text-slate-300 hover:text-white rounded-md text-sm font-bold hover:bg-graphite-800 transition-colors uppercase tracking-wider flex items-center gap-2"
+        className="cat-btn-ghost text-xs"
       >
-        <QrCode className="w-4 h-4" /> View QR
+        <QrCode className="w-3.5 h-3.5" /> Asset QR
       </button>
 
       {status === "AVAILABLE" && (
         <button 
           onClick={() => setIsCheckoutOpen(true)}
-          className="px-4 py-2 bg-industrial-yellow text-black border border-industrial-yellow/50 rounded-md text-sm font-bold hover:bg-yellow-400 transition-colors uppercase tracking-wider shadow-sm flex items-center gap-2"
+          className="cat-btn-primary text-xs"
         >
-          <LogOut className="w-4 h-4" /> Check Out
+          <LogOut className="w-3.5 h-3.5" /> Deploy Machine
         </button>
       )}
 
       {status === "ACTIVE" && (
         <button 
           onClick={() => setIsCheckinOpen(true)}
-          className="px-4 py-2 bg-blue-500/10 text-blue-400 border border-blue-500/30 rounded-md text-sm font-bold hover:bg-blue-500/20 hover:text-blue-300 transition-colors shadow-sm flex items-center gap-2"
+          className="cat-btn-secondary text-xs"
         >
-          <LogIn className="w-4 h-4" /> Check In
+          <LogIn className="w-3.5 h-3.5" /> Check In
         </button>
       )}
 
       {/* QR Code Modal */}
       {isQROpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-graphite-900 border border-graphite-700 rounded-md p-6 max-w-sm w-full shadow-2xl relative">
-            <button onClick={() => setIsQROpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">
+          <div className="bg-[#151a21] border border-[#262d38] rounded-lg p-6 max-w-sm w-full shadow-2xl relative">
+            <button onClick={() => setIsQROpen(false)} className="absolute top-4 right-4 text-[#94a3b8] hover:text-white">
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-xl font-bold mb-1 text-center text-white">Equipment QR</h3>
-            <p className="text-center text-industrial-yellow mb-6 font-mono text-sm tracking-wider">{equipmentId}</p>
-            <div className="flex justify-center mb-6 bg-white p-4 rounded-md mx-auto w-max">
+            <h3 className="text-base font-black text-center text-white uppercase tracking-wider">Cat VisionLink QR</h3>
+            <p className="text-center text-[#ffcd11] mb-5 font-mono text-sm tracking-wider font-bold">{equipmentId}</p>
+            <div className="flex justify-center mb-5 bg-white p-4 rounded mx-auto w-max shadow-inner">
               <QRCodeSVG 
                 value={`${process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')}/equipment/${equipmentId}`} 
-                size={200} 
+                size={190} 
               />
             </div>
-            <div className="mb-2 text-center">
-              <p className="text-xs text-slate-400 font-medium mb-2 uppercase tracking-wider">Scan Target</p>
-              <div className="flex items-center justify-between bg-graphite-950 border border-graphite-800 rounded p-2 overflow-hidden">
-                <span className="text-xs text-slate-300 font-mono truncate mr-2">
+            <div className="text-center">
+              <p className="text-[10px] text-[#64748b] font-bold mb-1.5 uppercase tracking-wider">Digital Scan Link</p>
+              <div className="flex items-center justify-between bg-[#0f1216] border border-[#262d38] rounded p-2 overflow-hidden">
+                <span className="text-xs text-[#94a3b8] font-mono truncate mr-2">
                   {`${process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')}/equipment/${equipmentId}`}
                 </span>
                 <button 
                   onClick={() => navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')}/equipment/${equipmentId}`)}
-                  className="text-xs bg-industrial-yellow text-black px-2 py-1.5 rounded-sm font-bold hover:bg-yellow-400 whitespace-nowrap transition-colors uppercase tracking-tight"
+                  className="cat-btn-primary text-[10px] py-1 px-2 shrink-0"
                 >
-                  Copy URL
+                  Copy
                 </button>
               </div>
             </div>
@@ -133,35 +133,35 @@ export function EquipmentActions({ equipmentId, status }: EquipmentActionsProps)
       {/* Checkout Modal */}
       {isCheckoutOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-graphite-900 border border-graphite-700 rounded-md p-6 max-w-md w-full shadow-2xl relative">
-            <button onClick={() => setIsCheckoutOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">
+          <div className="bg-[#151a21] border border-[#262d38] rounded-lg p-6 max-w-md w-full shadow-2xl relative">
+            <button onClick={() => setIsCheckoutOpen(false)} className="absolute top-4 right-4 text-[#94a3b8] hover:text-white">
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-xl font-bold mb-6 text-white tracking-tight flex items-center gap-2">
-              <LogOut className="text-industrial-yellow w-5 h-5" /> CHECK OUT ASSET
+            <h3 className="text-base font-black mb-5 text-white tracking-wide uppercase flex items-center gap-2">
+              <LogOut className="text-[#ffcd11] w-4 h-4" /> Authorize Machine Deployment
             </h3>
-            {error && <div className="p-3 mb-4 bg-red-500/10 border border-red-500/30 text-red-400 rounded-sm text-sm">{error}</div>}
+            {error && <div className="p-3 mb-4 bg-red-950/30 border border-red-500/40 text-red-300 rounded text-xs">{error}</div>}
             
-            <form onSubmit={handleCheckout} className="space-y-4">
+            <form onSubmit={handleCheckout} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Operator ID</label>
-                <input required type="text" value={opId} onChange={e => setOpId(e.target.value)} className="w-full px-3 py-2 bg-graphite-950 border border-graphite-700 text-white rounded-sm focus:outline-none focus:border-industrial-yellow font-mono text-sm" placeholder="e.g. OP-842" />
+                <label className="block text-[10px] font-bold text-[#64748b] mb-1 uppercase tracking-wider">Operator ID</label>
+                <input required type="text" value={opId} onChange={e => setOpId(e.target.value)} className="cat-input font-mono" placeholder="e.g. OP-842" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Site ID</label>
-                <input required type="text" value={siteId} onChange={e => setSiteId(e.target.value)} className="w-full px-3 py-2 bg-graphite-950 border border-graphite-700 text-white rounded-sm focus:outline-none focus:border-industrial-yellow font-mono text-sm" placeholder="e.g. SITE-A" />
+                <label className="block text-[10px] font-bold text-[#64748b] mb-1 uppercase tracking-wider">Job Site Location ID</label>
+                <input required type="text" value={siteId} onChange={e => setSiteId(e.target.value)} className="cat-input font-mono" placeholder="e.g. SITE-A" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Starting Engine Hours</label>
-                <input required type="number" step="0.1" min="0" value={startHours} onChange={e => setStartHours(e.target.value)} className="w-full px-3 py-2 bg-graphite-950 border border-graphite-700 text-white rounded-sm focus:outline-none focus:border-industrial-yellow font-mono text-sm" placeholder="0.0" />
+                <label className="block text-[10px] font-bold text-[#64748b] mb-1 uppercase tracking-wider">Initial Engine Hours</label>
+                <input required type="number" step="0.1" min="0" value={startHours} onChange={e => setStartHours(e.target.value)} className="cat-input font-mono" placeholder="0.0" />
               </div>
               
-              <div className="flex justify-end gap-3 pt-4">
-                <button type="button" onClick={() => setIsCheckoutOpen(false)} disabled={loading} className="px-4 py-2 text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider">
+              <div className="flex justify-end gap-2.5 pt-4">
+                <button type="button" onClick={() => setIsCheckoutOpen(false)} disabled={loading} className="cat-btn-ghost text-xs">
                   Cancel
                 </button>
-                <button type="submit" disabled={loading} className="px-6 py-2 bg-industrial-yellow text-black rounded-sm text-sm font-bold hover:bg-yellow-400 disabled:opacity-50 uppercase tracking-wider transition-colors">
-                  {loading ? "Processing..." : "Deploy Asset"}
+                <button type="submit" disabled={loading} className="cat-btn-primary text-xs">
+                  {loading ? "Authorizing..." : "Deploy Asset"}
                 </button>
               </div>
             </form>
@@ -172,35 +172,35 @@ export function EquipmentActions({ equipmentId, status }: EquipmentActionsProps)
       {/* Checkin Modal */}
       {isCheckinOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-graphite-900 border border-graphite-700 rounded-md p-6 max-w-md w-full shadow-2xl relative">
-            <button onClick={() => setIsCheckinOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">
+          <div className="bg-[#151a21] border border-[#262d38] rounded-lg p-6 max-w-md w-full shadow-2xl relative">
+            <button onClick={() => setIsCheckinOpen(false)} className="absolute top-4 right-4 text-[#94a3b8] hover:text-white">
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-xl font-bold mb-6 text-white tracking-tight flex items-center gap-2">
-              <LogIn className="text-industrial-yellow w-5 h-5" /> CHECK IN ASSET
+            <h3 className="text-base font-black mb-5 text-white tracking-wide uppercase flex items-center gap-2">
+              <LogIn className="text-[#ffcd11] w-4 h-4" /> Check In &amp; Telemetry Log
             </h3>
-            {error && <div className="p-3 mb-4 bg-red-500/10 border border-red-500/30 text-red-400 rounded-sm text-sm">{error}</div>}
+            {error && <div className="p-3 mb-4 bg-red-950/30 border border-red-500/40 text-red-300 rounded text-xs">{error}</div>}
             
-            <form onSubmit={handleCheckin} className="space-y-4">
+            <form onSubmit={handleCheckin} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Final Engine Hours</label>
-                <input required type="number" step="0.1" min="0" value={endHours} onChange={e => setEndHours(e.target.value)} className="w-full px-3 py-2 bg-graphite-950 border border-graphite-700 text-white rounded-sm focus:outline-none focus:border-industrial-yellow font-mono text-sm" placeholder="0.0" />
+                <label className="block text-[10px] font-bold text-[#64748b] mb-1 uppercase tracking-wider">Final Engine Hours</label>
+                <input required type="number" step="0.1" min="0" value={endHours} onChange={e => setEndHours(e.target.value)} className="cat-input font-mono" placeholder="0.0" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Idle Hours</label>
-                <input required type="number" step="0.1" min="0" value={idleHours} onChange={e => setIdleHours(e.target.value)} className="w-full px-3 py-2 bg-graphite-950 border border-graphite-700 text-white rounded-sm focus:outline-none focus:border-industrial-yellow font-mono text-sm" placeholder="0.0" />
+                <label className="block text-[10px] font-bold text-[#64748b] mb-1 uppercase tracking-wider">Total Idle Hours</label>
+                <input required type="number" step="0.1" min="0" value={idleHours} onChange={e => setIdleHours(e.target.value)} className="cat-input font-mono" placeholder="0.0" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Notes (Optional)</label>
-                <textarea value={notes} onChange={e => setNotes(e.target.value)} className="w-full px-3 py-2 bg-graphite-950 border border-graphite-700 text-white rounded-sm focus:outline-none focus:border-industrial-yellow text-sm" rows={3} placeholder="Any maintenance issues or observations..."></textarea>
+                <label className="block text-[10px] font-bold text-[#64748b] mb-1 uppercase tracking-wider">Telemetry &amp; Condition Notes</label>
+                <textarea value={notes} onChange={e => setNotes(e.target.value)} className="cat-input resize-none h-20 text-xs font-mono" placeholder="Observations, fault flags, or return condition..."></textarea>
               </div>
               
-              <div className="flex justify-end gap-3 pt-4">
-                <button type="button" onClick={() => setIsCheckinOpen(false)} disabled={loading} className="px-4 py-2 text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider">
+              <div className="flex justify-end gap-2.5 pt-4">
+                <button type="button" onClick={() => setIsCheckinOpen(false)} disabled={loading} className="cat-btn-ghost text-xs">
                   Cancel
                 </button>
-                <button type="submit" disabled={loading} className="px-6 py-2 bg-industrial-yellow text-black rounded-sm text-sm font-bold hover:bg-yellow-400 disabled:opacity-50 uppercase tracking-wider transition-colors">
-                  {loading ? "Processing..." : "Return Asset"}
+                <button type="submit" disabled={loading} className="cat-btn-primary text-xs">
+                  {loading ? "Processing..." : "Confirm Return"}
                 </button>
               </div>
             </form>

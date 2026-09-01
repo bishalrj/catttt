@@ -53,76 +53,76 @@ export function CheckoutForm({ equipmentId }: CheckoutFormProps) {
 
   if (success) {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center h-full flex flex-col justify-center items-center">
-        <CheckCircle2 className="w-10 h-10 text-rm-green mb-2" />
-        <h3 className="text-rm-green font-bold text-base mb-1">Asset Checked Out</h3>
-        <p className="text-rm-text-primary text-sm font-semibold">{equipmentId}</p>
-        <p className="text-rm-text-secondary text-xs mt-1">Assigned to <span className="font-bold text-rm-text-primary">{siteId}</span> · Operator <span className="font-bold text-rm-text-primary">{operatorId}</span></p>
+      <div className="bg-emerald-950/20 border border-emerald-500/40 rounded-lg p-6 text-center h-full flex flex-col justify-center items-center">
+        <CheckCircle2 className="w-10 h-10 text-emerald-400 mb-2" />
+        <h3 className="text-emerald-400 font-black text-sm uppercase tracking-wider mb-1">Asset Deployed</h3>
+        <p className="text-white text-xs font-mono font-bold">{equipmentId}</p>
+        <p className="text-[#94a3b8] text-xs mt-1 font-mono">Assigned to <span className="text-white font-bold">{siteId}</span> · Operator <span className="text-white font-bold">{operatorId}</span></p>
       </div>
     );
   }
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center gap-2 pb-3 mb-4 border-b border-rm-border">
-        <Truck className="w-4 h-4 text-rm-red" />
-        <h3 className="text-rm-text-primary font-bold text-sm uppercase tracking-wider">Check Out Machine</h3>
+      <div className="flex items-center gap-2 pb-3 mb-4 border-b border-[#262d38]">
+        <Truck className="w-4 h-4 text-[#ffcd11]" />
+        <h3 className="text-white font-black text-xs uppercase tracking-wider">Deploy Asset to Site</h3>
       </div>
       
-      <form onSubmit={handleSubmit} className="space-y-3.5 flex-1 flex flex-col">
+      <form onSubmit={handleSubmit} className="space-y-3 flex-1 flex flex-col">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-rm-red p-2.5 text-xs font-semibold rounded-lg">
+          <div className="bg-red-950/30 border border-red-500/50 text-red-300 p-2.5 text-xs font-mono rounded">
             {error}
           </div>
         )}
         
         <div>
-          <label className="block text-[11px] font-bold text-rm-text-muted uppercase mb-1">Operator ID</label>
+          <label className="block text-[10px] font-bold text-[#64748b] uppercase mb-1">Operator ID</label>
           <input
             type="text"
             value={operatorId}
             onChange={(e) => setOperatorId(e.target.value)}
-            className="rm-input"
+            className="cat-input font-mono"
             placeholder="e.g. OP105"
             required
           />
         </div>
         
         <div>
-          <label className="block text-[11px] font-bold text-rm-text-muted uppercase mb-1">Site Location ID</label>
+          <label className="block text-[10px] font-bold text-[#64748b] uppercase mb-1">Job Site Location ID</label>
           <input
             type="text"
             value={siteId}
             onChange={(e) => setSiteId(e.target.value)}
-            className="rm-input"
+            className="cat-input font-mono"
             placeholder="e.g. S001"
             required
           />
         </div>
         
         <div>
-          <label className="block text-[11px] font-bold text-rm-text-muted uppercase mb-1">Starting Engine Hours</label>
+          <label className="block text-[10px] font-bold text-[#64748b] uppercase mb-1">Initial Engine Hours</label>
           <input
             type="number"
             min="0"
             step="0.1"
             value={engineHours}
             onChange={(e) => setEngineHours(e.target.value ? Number(e.target.value) : "")}
-            className="rm-input font-mono"
+            className="cat-input font-mono"
             placeholder="0.0"
             required
           />
         </div>
 
         <div>
-          <label className="block text-[11px] font-bold text-rm-text-muted uppercase mb-1">Rental Duration (days)</label>
+          <label className="block text-[10px] font-bold text-[#64748b] uppercase mb-1">Rental Period (days)</label>
           <input
             type="number"
             min="1"
             step="1"
             value={durationDays}
             onChange={(e) => setDurationDays(e.target.value ? Number(e.target.value) : "")}
-            className="rm-input font-mono"
+            className="cat-input font-mono"
             placeholder="14"
           />
         </div>
@@ -131,9 +131,9 @@ export function CheckoutForm({ equipmentId }: CheckoutFormProps) {
           <button
             type="submit"
             disabled={loading}
-            className="rm-btn-primary w-full justify-center py-2.5"
+            className="cat-btn-primary w-full justify-center py-2.5"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm & Check Out"}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Authorize Deployment"}
           </button>
         </div>
       </form>

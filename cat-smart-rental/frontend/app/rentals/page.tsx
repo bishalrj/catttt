@@ -8,32 +8,32 @@ export default async function RentalsPage() {
     const rentals = await getRentals();
 
     return (
-      <div className="max-w-7xl mx-auto space-y-6 rm-page-enter">
+      <div className="max-w-7xl mx-auto space-y-6 cat-page-enter">
         {/* Header */}
-        <div className="rm-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="cat-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="rm-section-heading text-2xl">
+            <h1 className="cat-section-heading text-xl">
               Rental <span className="accent">Operations</span>
             </h1>
-            <p className="text-rm-text-secondary text-sm mt-1">
-              Historical equipment movements, site checkout logs, and active field assignments
+            <p className="text-[#94a3b8] text-xs mt-1">
+              Historical equipment deployments, checkout telemetry, and active field assignments
             </p>
           </div>
           <div>
-            <span className="text-xs font-semibold text-rm-text-muted bg-rm-surface px-3 py-1.5 rounded-lg border border-rm-border">
-              {rentals.length} Operations Recorded
+            <span className="text-xs font-mono font-bold text-[#ffcd11] bg-[#12161c] px-3 py-1.5 rounded border border-[#262d38]">
+              {rentals.length} OPERATIONS LOGGED
             </span>
           </div>
         </div>
 
         {/* Table Card */}
-        <div className="rm-card overflow-hidden">
+        <div className="cat-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="rm-table">
+            <table className="cat-table">
               <thead>
                 <tr>
                   <th>Asset ID</th>
-                  <th>Site Location</th>
+                  <th>Job Site</th>
                   <th>Operator</th>
                   <th>Check-Out</th>
                   <th>Check-In</th>
@@ -46,8 +46,8 @@ export default async function RentalsPage() {
               <tbody>
                 {rentals.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="py-12 text-center text-rm-text-muted">
-                      <Box className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                    <td colSpan={9} className="py-12 text-center text-[#64748b]">
+                      <Box className="w-8 h-8 mx-auto mb-2 text-[#323b49]" />
                       No rental operations found.
                     </td>
                   </tr>
@@ -61,47 +61,47 @@ export default async function RentalsPage() {
                     return (
                       <tr key={rental.id}>
                         <td className="font-bold">
-                          <Link href={`/equipment/${rental.equipment_id}`} className="text-rm-red hover:underline font-mono inline-flex items-center gap-1.5">
-                            <Truck className="w-3.5 h-3.5 text-rm-text-muted" />
+                          <Link href={`/equipment/${rental.equipment_id}`} className="text-[#ffcd11] hover:underline font-mono inline-flex items-center gap-1.5 text-xs">
+                            <Truck className="w-3.5 h-3.5 text-[#64748b]" />
                             {rental.equipment_id}
                           </Link>
                         </td>
-                        <td className="font-medium text-rm-text-primary">{rental.site_id}</td>
-                        <td className="text-rm-text-secondary text-xs">{rental.operator_id}</td>
-                        <td className="text-rm-text-secondary text-xs">
+                        <td className="font-bold text-white font-mono text-xs">{rental.site_id}</td>
+                        <td className="text-[#94a3b8] text-xs font-mono">{rental.operator_id}</td>
+                        <td className="text-[#94a3b8] text-xs font-mono">
                           {rental.checkout_time ? (
                             <div className="flex items-center gap-1.5">
-                              <Calendar className="w-3.5 h-3.5 text-rm-text-muted" />
+                              <Calendar className="w-3.5 h-3.5 text-[#64748b]" />
                               {format(new Date(rental.checkout_time), "MM/dd/yy HH:mm")}
                             </div>
                           ) : "-"}
                         </td>
-                        <td className="text-rm-text-secondary text-xs">
+                        <td className="text-[#94a3b8] text-xs font-mono">
                           {rental.checkin_time ? (
                             <div className="flex items-center gap-1.5">
-                              <Calendar className="w-3.5 h-3.5 text-rm-text-muted" />
+                              <Calendar className="w-3.5 h-3.5 text-[#64748b]" />
                               {format(new Date(rental.checkin_time), "MM/dd/yy HH:mm")}
                             </div>
                           ) : (
-                            <span className="text-rm-green font-semibold">Active in Field</span>
+                            <span className="text-[#34d399] font-bold">OPERATIONAL</span>
                           )}
                         </td>
-                        <td className="text-rm-text-primary text-right font-mono font-medium">
+                        <td className="text-white text-right font-mono font-bold text-xs">
                           {rental.rental_duration_days !== null ? `${rental.rental_duration_days} d` : "-"}
                         </td>
-                        <td className="text-rm-text-primary text-right font-mono font-semibold">
+                        <td className="text-[#ffcd11] text-right font-mono font-bold text-xs">
                           {runtime !== "-" ? `${runtime} h` : "-"}
                         </td>
-                        <td className="text-rm-text-secondary text-right font-mono">
+                        <td className="text-[#94a3b8] text-right font-mono text-xs">
                           {rental.idle_hours !== null ? `${rental.idle_hours} h` : "-"}
                         </td>
                         <td className="text-center">
                           {isActive ? (
-                            <span className="rm-badge rm-badge-active">
+                            <span className="cat-badge cat-badge-active">
                               ACTIVE
                             </span>
                           ) : (
-                            <span className="rm-badge rm-badge-available">
+                            <span className="cat-badge cat-badge-available">
                               COMPLETED
                             </span>
                           )}
@@ -118,9 +118,9 @@ export default async function RentalsPage() {
     );
   } catch (error) {
     return (
-      <div className="max-w-4xl mx-auto p-8 text-center bg-white rounded-2xl shadow-sm border border-red-200">
-        <h2 className="text-xl font-bold text-rm-red mb-2">Error Loading Operations</h2>
-        <p className="text-rm-text-secondary text-sm">Could not connect to telemetry feed.</p>
+      <div className="max-w-4xl mx-auto p-8 text-center bg-[#151a21] rounded-lg border border-red-500/40">
+        <h2 className="text-xl font-bold text-red-400 mb-2">Error Loading Operations</h2>
+        <p className="text-[#94a3b8] text-xs">Could not connect to telemetry feed.</p>
       </div>
     );
   }

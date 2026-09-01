@@ -22,7 +22,7 @@ export function AnomalyNarrative({ anomaly }: Props) {
     }
 
     setOpen(true);
-    if (narrative !== null) return; // Already fetched
+    if (narrative !== null) return;
 
     setLoading(true);
     setError(null);
@@ -30,37 +30,37 @@ export function AnomalyNarrative({ anomaly }: Props) {
       const text = await explainAnomaly(anomaly as unknown as Record<string, unknown>);
       setNarrative(text);
     } catch {
-      setError("Could not generate explanation. Ensure GEMINI_API_KEY is configured.");
+      setError("Could not generate Cat Fleet advisory. Ensure GEMINI_API_KEY is configured in backend/.env.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="mt-0">
+    <div className="mt-1">
       <button
         onClick={handleExpand}
         id={`explain-${anomaly.equipment_id}-${anomaly.anomaly_type}`}
-        className="inline-flex items-center gap-1.5 text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors group"
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#ffcd11] hover:text-[#e5b700] transition-colors uppercase tracking-wider group"
       >
-        <Sparkles className="w-3 h-3 group-hover:scale-110 transition-transform" />
+        <Sparkles className="w-3 h-3 group-hover:scale-110 transition-transform text-[#ffcd11]" />
         {open ? (
           <>
-            Hide <ChevronUp className="w-3 h-3" />
+            Hide Advisory <ChevronUp className="w-3 h-3" />
           </>
         ) : (
           <>
-            Explain <ChevronDown className="w-3 h-3" />
+            Cat AI Advisory <ChevronDown className="w-3 h-3" />
           </>
         )}
       </button>
 
       {open && (
-        <div className="mt-2 rounded-md border border-violet-500/20 bg-violet-500/5 p-3">
+        <div className="mt-2 rounded bg-[#12161c] border border-[#ffcd11]/30 p-3.5 shadow-md">
           {loading && (
-            <div className="flex items-center gap-2 text-xs text-violet-400">
+            <div className="flex items-center gap-2 text-xs text-[#ffcd11] font-mono">
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              Generating advisory…
+              Generating Cat Telemetry Advisory…
             </div>
           )}
           {error && (
@@ -70,7 +70,7 @@ export function AnomalyNarrative({ anomaly }: Props) {
             </div>
           )}
           {narrative && !loading && (
-            <p className="text-xs text-slate-300 leading-relaxed whitespace-pre-wrap">
+            <p className="text-xs text-[#f1f5f9] leading-relaxed whitespace-pre-wrap font-sans">
               {narrative}
             </p>
           )}
