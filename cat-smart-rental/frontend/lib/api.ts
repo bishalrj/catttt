@@ -1,4 +1,4 @@
-import { Equipment, DashboardSummary, CheckoutRequest, CheckinRequest, RentalHistory } from "./types";
+import { Equipment, DashboardSummary, CheckoutRequest, CheckinRequest, RentalHistory, OverdueAlert, UsageLog, UsageLogSummary, SiteUsageSummary, DemandForecastEntry, Anomaly } from "./types";
 
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 const API_URL = rawApiUrl.replace(/\/$/, "");
@@ -75,6 +75,66 @@ export async function getEquipmentRentals(id: string): Promise<RentalHistory[]> 
   });
   if (!res.ok) {
     throw new Error(`Failed to fetch rentals for ${id}`);
+  }
+  return res.json();
+}
+
+export async function getOverdueAlerts(): Promise<OverdueAlert[]> {
+  const res = await fetch(`${API_URL}/alerts/overdue`, {
+    cache: "no-store"
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch overdue alerts");
+  }
+  return res.json();
+}
+
+export async function getUsageLogs(equipmentId: string): Promise<UsageLog[]> {
+  const res = await fetch(`${API_URL}/usage-logs/${equipmentId}`, {
+    cache: "no-store"
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch usage logs for ${equipmentId}`);
+  }
+  return res.json();
+}
+
+export async function getUsageSummary(equipmentId: string): Promise<UsageLogSummary> {
+  const res = await fetch(`${API_URL}/usage-logs/${equipmentId}/summary`, {
+    cache: "no-store"
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch usage summary for ${equipmentId}`);
+  }
+  return res.json();
+}
+
+export async function getSiteUsageSummary(): Promise<SiteUsageSummary[]> {
+  const res = await fetch(`${API_URL}/usage-logs/by-site/summary`, {
+    cache: "no-store"
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch site usage summary");
+  }
+  return res.json();
+}
+
+export async function getDemandForecast(): Promise<DemandForecastEntry[]> {
+  const res = await fetch(`${API_URL}/forecast/demand`, {
+    cache: "no-store"
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch demand forecast");
+  }
+  return res.json();
+}
+
+export async function getAnomalies(): Promise<Anomaly[]> {
+  const res = await fetch(`${API_URL}/anomalies`, {
+    cache: "no-store"
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch anomalies");
   }
   return res.json();
 }

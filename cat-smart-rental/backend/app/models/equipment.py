@@ -15,6 +15,7 @@ class Equipment(Base):
     operating_days = Column(Integer, default=0)
     last_operator_id = Column(String, nullable=True)
     status = Column(String, nullable=False)
+    expected_return_date = Column(DateTime, nullable=True)
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
+from sqlalchemy.sql import func
 from fastapi import HTTPException
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from app.models.equipment import Equipment
 from app.models.rental_history import RentalHistory
 from app.schemas.rental import CheckoutRequest, CheckinRequest
@@ -20,23 +21,28 @@ def checkout_equipment(request: CheckoutRequest, db: Session = None):
         if eq["status"] == "ACTIVE":
             raise HTTPException(status_code=409, detail="Equipment is already active")
         
+        now = datetime.now(timezone.utc)
+        expected_return_date = now + timedelta(days=request.rental_duration_days)
+
         eq["status"] = "ACTIVE"
         eq["site_id"] = request.site_id
         eq["last_operator_id"] = request.operator_id
-        eq["checkout_date"] = datetime.now(timezone.utc)
-        
+        eq["checkout_date"] = now
+        eq["expected_return_date"] = expected_return_date
+
         mock_rental = {
             "id": len(MOCK_RENTAL_DATA) + 1,
             "equipment_id": request.equipment_id,
             "operator_id": request.operator_id,
             "site_id": request.site_id,
-            "checkout_time": datetime.now(timezone.utc),
+            "checkout_time": now,
             "checkin_time": None,
+            "expected_return_time": expected_return_date,
             "engine_hours_start": request.engine_hours_start,
             "engine_hours_end": None,
             "idle_hours": None,
             "notes": None,
-            "created_at": datetime.now(timezone.utc),
+            "created_at": now,
         }
         MOCK_RENTAL_DATA.append(mock_rental)
         return eq
@@ -50,13 +56,17 @@ def checkout_equipment(request: CheckoutRequest, db: Session = None):
         if eq.status == "ACTIVE":
             raise HTTPException(status_code=409, detail="Equipment is already active")
 
+        now = datetime.now(timezone.utc)
+        expected_return_date = now + timedelta(days=request.rental_duration_days)
+
         # Create rental history
         new_rental = RentalHistory(
             equipment_id=request.equipment_id,
             operator_id=request.operator_id,
             site_id=request.site_id,
             engine_hours_start=request.engine_hours_start,
-            checkout_time=func.now() if hasattr(func, 'now') else datetime.now(timezone.utc)
+            checkout_time=now,
+            expected_return_time=expected_return_date
         )
         db.add(new_rental)
 
@@ -64,7 +74,8 @@ def checkout_equipment(request: CheckoutRequest, db: Session = None):
         eq.status = "ACTIVE"
         eq.site_id = request.site_id
         eq.last_operator_id = request.operator_id
-        eq.checkout_date = datetime.now(timezone.utc)
+        eq.checkout_date = now
+        eq.expected_return_date = expected_return_date
 
         db.commit()
         db.refresh(eq)
@@ -75,8 +86,6 @@ def checkout_equipment(request: CheckoutRequest, db: Session = None):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail="Database error occurred during checkout")
-    
-from sqlalchemy.sql import func
 
 def checkin_equipment(request: CheckinRequest, db: Session = None):
     if db is None:
@@ -101,6 +110,7 @@ def checkin_equipment(request: CheckinRequest, db: Session = None):
         eq["last_operator_id"] = None
         eq["site_id"] = None
         eq["checkin_date"] = datetime.now(timezone.utc)
+        eq["expected_return_date"] = None
         
         # update operating days, engine hours, idle hours (rudimentary mock)
         if active_rental:
@@ -142,6 +152,7 @@ def checkin_equipment(request: CheckinRequest, db: Session = None):
         eq.last_operator_id = None
         eq.site_id = None
         eq.checkin_date = now
+        eq.expected_return_date = None
 
         db.commit()
         db.refresh(rental)
@@ -183,6 +194,7 @@ def process_rentals(rentals):
             "site_id": r.site_id,
             "checkout_time": r.checkout_time,
             "checkin_time": r.checkin_time,
+            "expected_return_time": r.expected_return_time,
             "engine_hours_start": r.engine_hours_start,
             "engine_hours_end": r.engine_hours_end,
             "idle_hours": r.idle_hours,

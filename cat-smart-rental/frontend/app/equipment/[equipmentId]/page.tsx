@@ -1,6 +1,6 @@
-import { getEquipmentById, getEquipmentRentals } from "@/lib/api";
+import { getEquipmentById, getEquipmentRentals, getUsageSummary, getUsageLogs } from "@/lib/api";
 import Link from "next/link";
-import { ArrowLeft, Clock, Calendar, MapPin, User, Activity, AlertCircle, Wrench, CheckCircle } from "lucide-react";
+import { ArrowLeft, Clock, Calendar, MapPin, User, Activity, AlertCircle, Wrench, CheckCircle, Fuel, PauseCircle } from "lucide-react";
 import { format } from "date-fns";
 import { EquipmentActions } from "@/components/equipment/EquipmentActions";
 import { CheckoutForm } from "@/components/equipment/CheckoutForm";
@@ -9,10 +9,13 @@ import { CheckinForm } from "@/components/equipment/CheckinForm";
 export default async function EquipmentDetailsPage({ params }: { params: Promise<{ equipmentId: string }> }) {
   try {
     const { equipmentId } = await params;
-    const [eq, rentals] = await Promise.all([
+    const [eq, rentals, usageSummary, usageLogs] = await Promise.all([
       getEquipmentById(equipmentId),
-      getEquipmentRentals(equipmentId)
+      getEquipmentRentals(equipmentId),
+      getUsageSummary(equipmentId),
+      getUsageLogs(equipmentId)
     ]);
+    const recentLogs = usageLogs.slice(0, 5);
 
     const utilization = (eq.engine_hours_per_day / (eq.engine_hours_per_day + eq.idle_hours_per_day)) * 100 || 0;
 
@@ -109,6 +112,68 @@ export default async function EquipmentDetailsPage({ params }: { params: Promise
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* USAGE & FUEL */}
+            <div className="bg-graphite-900 border border-graphite-700 rounded-md overflow-hidden">
+              <div className="p-4 border-b border-graphite-700 bg-graphite-800">
+                <h3 className="text-sm font-semibold text-white uppercase tracking-wider flex items-center gap-2">
+                  <Fuel className="w-4 h-4 text-industrial-yellow" />
+                  Usage & Fuel
+                </h3>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
+                <div>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Fuel Used</p>
+                  <p className="text-lg font-bold text-white">{usageSummary.total_fuel_liters.toFixed(1)} <span className="text-xs text-slate-500 font-normal">L</span></p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Operating Hours</p>
+                  <p className="text-lg font-bold text-white">{usageSummary.total_operating_hours.toFixed(1)} <span className="text-xs text-slate-500 font-normal">h</span></p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Downtime</p>
+                  <p className="text-lg font-bold text-white">{usageSummary.total_downtime_hours.toFixed(1)} <span className="text-xs text-slate-500 font-normal">h</span></p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Avg Daily Idle</p>
+                  <p className="text-lg font-bold text-white">{usageSummary.avg_daily_idle_hours.toFixed(1)} <span className="text-xs text-slate-500 font-normal">h</span></p>
+                </div>
+              </div>
+              {recentLogs.length > 0 && (
+                <div className="overflow-x-auto border-t border-graphite-700">
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-slate-400 uppercase bg-graphite-950/50">
+                      <tr>
+                        <th className="px-4 py-2 font-medium">Date</th>
+                        <th className="px-4 py-2 font-medium text-right">Engine</th>
+                        <th className="px-4 py-2 font-medium text-right">Idle</th>
+                        <th className="px-4 py-2 font-medium text-right">Fuel</th>
+                        <th className="px-4 py-2 font-medium text-right">Downtime</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-graphite-700/50">
+                      {recentLogs.map((log) => (
+                        <tr key={log.id}>
+                          <td className="px-4 py-2 text-slate-400">{format(new Date(log.log_date), "MMM dd, yy")}</td>
+                          <td className="px-4 py-2 text-slate-300 text-right font-mono">{log.engine_hours.toFixed(1)}h</td>
+                          <td className="px-4 py-2 text-slate-300 text-right font-mono">{log.idle_hours.toFixed(1)}h</td>
+                          <td className="px-4 py-2 text-slate-300 text-right font-mono">{log.fuel_used_liters.toFixed(1)}L</td>
+                          <td className="px-4 py-2 text-right font-mono">
+                            {log.downtime_hours > 0 ? (
+                              <span className="inline-flex items-center gap-1 text-amber-400">
+                                <PauseCircle className="w-3 h-3" />{log.downtime_hours.toFixed(1)}h
+                              </span>
+                            ) : (
+                              <span className="text-slate-600">-</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
             {/* RENTAL HISTORY TABLE */}

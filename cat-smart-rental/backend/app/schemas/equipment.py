@@ -19,6 +19,7 @@ class EquipmentBase(BaseModel):
     operating_days: int = 0
     last_operator_id: Optional[str] = None
     status: EquipmentStatus
+    expected_return_date: Optional[datetime] = None
 
 class EquipmentResponse(EquipmentBase):
     equipment_id: str

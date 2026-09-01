@@ -7,6 +7,7 @@ class CheckoutRequest(BaseModel):
     operator_id: str
     site_id: str
     engine_hours_start: float = Field(ge=0.0)
+    rental_duration_days: int = Field(default=14, ge=1)
 
 class CheckinRequest(BaseModel):
     equipment_id: str
@@ -21,6 +22,7 @@ class RentalHistoryResponse(BaseModel):
     site_id: str
     checkout_time: datetime
     checkin_time: Optional[datetime] = None
+    expected_return_time: Optional[datetime] = None
     engine_hours_start: float
     engine_hours_end: Optional[float] = None
     idle_hours: Optional[float] = None

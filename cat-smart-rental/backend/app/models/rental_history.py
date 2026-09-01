@@ -11,6 +11,7 @@ class RentalHistory(Base):
     site_id = Column(String, nullable=False)
     checkout_time = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     checkin_time = Column(DateTime(timezone=True), nullable=True)
+    expected_return_time = Column(DateTime(timezone=True), nullable=True)
     engine_hours_start = Column(Float, nullable=False)
     engine_hours_end = Column(Float, nullable=True)
     idle_hours = Column(Float, nullable=True)

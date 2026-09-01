@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import equipment, dashboard, rentals
+from app.routers import equipment, dashboard, rentals, alerts, usage_logs, forecast, anomalies
 
 import os
 
@@ -26,6 +26,10 @@ app.add_middleware(
 app.include_router(equipment.router)
 app.include_router(dashboard.router)
 app.include_router(rentals.router)
+app.include_router(alerts.router)
+app.include_router(usage_logs.router)
+app.include_router(forecast.router)
+app.include_router(anomalies.router)
 
 @app.get("/health")
 def health_check():

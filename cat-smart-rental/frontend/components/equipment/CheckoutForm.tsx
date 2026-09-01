@@ -13,6 +13,7 @@ export function CheckoutForm({ equipmentId }: CheckoutFormProps) {
   const [operatorId, setOperatorId] = useState("");
   const [siteId, setSiteId] = useState("");
   const [engineHours, setEngineHours] = useState<number | "">("");
+  const [durationDays, setDurationDays] = useState<number | "">(14);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -37,7 +38,8 @@ export function CheckoutForm({ equipmentId }: CheckoutFormProps) {
         equipment_id: equipmentId,
         operator_id: operatorId,
         site_id: siteId,
-        engine_hours_start: Number(engineHours)
+        engine_hours_start: Number(engineHours),
+        rental_duration_days: durationDays === "" ? undefined : Number(durationDays)
       });
       setSuccess(true);
       router.refresh();
@@ -107,7 +109,20 @@ export function CheckoutForm({ equipmentId }: CheckoutFormProps) {
             required
           />
         </div>
-        
+
+        <div>
+          <label className="block text-xs font-medium text-slate-400 uppercase mb-1">Rental Duration (days)</label>
+          <input
+            type="number"
+            min="1"
+            step="1"
+            value={durationDays}
+            onChange={(e) => setDurationDays(e.target.value ? Number(e.target.value) : "")}
+            className="w-full bg-graphite-900 border border-graphite-700 text-white rounded p-2 text-sm focus:outline-none focus:border-industrial-yellow"
+            placeholder="14"
+          />
+        </div>
+
         <div className="mt-auto pt-4">
           <button
             type="submit"
