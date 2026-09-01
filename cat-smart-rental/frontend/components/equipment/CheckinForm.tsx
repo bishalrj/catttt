@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { checkinRental } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { CheckCircle2, Loader2, Wrench } from "lucide-react";
 
 interface CheckinFormProps {
   equipmentId: string;
@@ -52,61 +53,64 @@ export function CheckinForm({ equipmentId, checkoutDate }: CheckinFormProps) {
   if (successData) {
     const runtime = (successData.engine_hours_end || 0) - (successData.engine_hours_start || 0);
     return (
-      <div className="bg-graphite-800 border border-green-500/30 rounded p-4 text-center h-full flex flex-col justify-center">
-        <h3 className="text-green-400 font-bold mb-2">ASSET RETURNED</h3>
-        <p className="text-slate-300 text-sm">Duration: {successData.rental_duration_days} days</p>
-        <p className="text-slate-300 text-sm">Total runtime: {runtime.toFixed(1)} hrs</p>
-        <p className="text-slate-300 text-sm">Idle hours: {successData.idle_hours} hrs</p>
+      <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center h-full flex flex-col justify-center items-center">
+        <CheckCircle2 className="w-10 h-10 text-rm-green mb-2" />
+        <h3 className="text-rm-green font-bold text-base mb-1">Asset Returned</h3>
+        <p className="text-rm-text-primary text-sm font-semibold">Duration: {successData.rental_duration_days} days</p>
+        <p className="text-rm-text-secondary text-xs mt-1">Total runtime: <span className="font-bold text-rm-text-primary">{runtime.toFixed(1)} hrs</span> · Idle: <span className="font-bold text-rm-text-primary">{successData.idle_hours} hrs</span></p>
       </div>
     );
   }
 
   return (
-    <div className="bg-graphite-800 border border-graphite-700 p-5 rounded-md h-full flex flex-col">
-      <h3 className="text-white font-semibold mb-4 border-b border-graphite-700 pb-2">CHECK IN ASSET</h3>
+    <div className="h-full flex flex-col">
+      <div className="flex items-center gap-2 pb-3 mb-4 border-b border-rm-border">
+        <Wrench className="w-4 h-4 text-rm-red" />
+        <h3 className="text-rm-text-primary font-bold text-sm uppercase tracking-wider">Check In Machine</h3>
+      </div>
       
-      <form onSubmit={handleSubmit} className="space-y-4 flex-1 flex flex-col">
+      <form onSubmit={handleSubmit} className="space-y-3.5 flex-1 flex flex-col">
         {error && (
-          <div className="bg-red-900/50 border border-red-500/50 text-red-200 p-2 text-sm rounded">
+          <div className="bg-red-50 border border-red-200 text-rm-red p-2.5 text-xs font-semibold rounded-lg">
             {error}
           </div>
         )}
         
         <div>
-          <label className="block text-xs font-medium text-slate-400 uppercase mb-1">Final Engine Hours</label>
+          <label className="block text-[11px] font-bold text-rm-text-muted uppercase mb-1">Final Engine Hours</label>
           <input
             type="number"
             min="0"
             step="0.1"
             value={engineHoursEnd}
             onChange={(e) => setEngineHoursEnd(e.target.value ? Number(e.target.value) : "")}
-            className="w-full bg-graphite-900 border border-graphite-700 text-white rounded p-2 text-sm focus:outline-none focus:border-industrial-yellow"
+            className="rm-input font-mono"
             placeholder="0.0"
             required
           />
         </div>
         
         <div>
-          <label className="block text-xs font-medium text-slate-400 uppercase mb-1">Idle Hours</label>
+          <label className="block text-[11px] font-bold text-rm-text-muted uppercase mb-1">Idle Hours Logged</label>
           <input
             type="number"
             min="0"
             step="0.1"
             value={idleHours}
             onChange={(e) => setIdleHours(e.target.value ? Number(e.target.value) : "")}
-            className="w-full bg-graphite-900 border border-graphite-700 text-white rounded p-2 text-sm focus:outline-none focus:border-industrial-yellow"
+            className="rm-input font-mono"
             placeholder="0.0"
             required
           />
         </div>
         
         <div>
-          <label className="block text-xs font-medium text-slate-400 uppercase mb-1">Notes</label>
+          <label className="block text-[11px] font-bold text-rm-text-muted uppercase mb-1">Return Condition / Notes</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full bg-graphite-900 border border-graphite-700 text-white rounded p-2 text-sm focus:outline-none focus:border-industrial-yellow resize-none h-20"
-            placeholder="Optional return notes..."
+            className="rm-input resize-none h-20 text-xs"
+            placeholder="Optional return telemetry notes..."
           />
         </div>
         
@@ -114,9 +118,9 @@ export function CheckinForm({ equipmentId, checkoutDate }: CheckinFormProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-graphite-700 hover:bg-graphite-600 text-white font-bold py-2 px-4 rounded text-sm transition-colors disabled:opacity-50"
+            className="rm-btn-secondary w-full justify-center py-2.5"
           >
-            {loading ? "PROCESSING..." : "CONFIRM CHECK-IN"}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm & Check In"}
           </button>
         </div>
       </form>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { checkoutRental } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { CheckCircle2, Loader2, Truck } from "lucide-react";
 
 interface CheckoutFormProps {
   equipmentId: string;
@@ -21,7 +22,7 @@ export function CheckoutForm({ equipmentId }: CheckoutFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!operatorId || !siteId || engineHours === "") {
-      setError("Please fill in all fields.");
+      setError("Please fill in all required fields.");
       return;
     }
     
@@ -52,73 +53,76 @@ export function CheckoutForm({ equipmentId }: CheckoutFormProps) {
 
   if (success) {
     return (
-      <div className="bg-graphite-800 border border-green-500/30 rounded p-4 text-center h-full flex flex-col justify-center">
-        <h3 className="text-green-400 font-bold mb-2">ASSET ACTIVATED</h3>
-        <p className="text-slate-300 text-sm">{equipmentId}</p>
-        <p className="text-slate-300 text-sm">Assigned to {siteId}</p>
-        <p className="text-slate-300 text-sm">Operator {operatorId}</p>
+      <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center h-full flex flex-col justify-center items-center">
+        <CheckCircle2 className="w-10 h-10 text-rm-green mb-2" />
+        <h3 className="text-rm-green font-bold text-base mb-1">Asset Checked Out</h3>
+        <p className="text-rm-text-primary text-sm font-semibold">{equipmentId}</p>
+        <p className="text-rm-text-secondary text-xs mt-1">Assigned to <span className="font-bold text-rm-text-primary">{siteId}</span> · Operator <span className="font-bold text-rm-text-primary">{operatorId}</span></p>
       </div>
     );
   }
 
   return (
-    <div className="bg-graphite-800 border border-graphite-700 p-5 rounded-md h-full flex flex-col">
-      <h3 className="text-white font-semibold mb-4 border-b border-graphite-700 pb-2">CHECK OUT ASSET</h3>
+    <div className="h-full flex flex-col">
+      <div className="flex items-center gap-2 pb-3 mb-4 border-b border-rm-border">
+        <Truck className="w-4 h-4 text-rm-red" />
+        <h3 className="text-rm-text-primary font-bold text-sm uppercase tracking-wider">Check Out Machine</h3>
+      </div>
       
-      <form onSubmit={handleSubmit} className="space-y-4 flex-1 flex flex-col">
+      <form onSubmit={handleSubmit} className="space-y-3.5 flex-1 flex flex-col">
         {error && (
-          <div className="bg-red-900/50 border border-red-500/50 text-red-200 p-2 text-sm rounded">
+          <div className="bg-red-50 border border-red-200 text-rm-red p-2.5 text-xs font-semibold rounded-lg">
             {error}
           </div>
         )}
         
         <div>
-          <label className="block text-xs font-medium text-slate-400 uppercase mb-1">Operator ID</label>
+          <label className="block text-[11px] font-bold text-rm-text-muted uppercase mb-1">Operator ID</label>
           <input
             type="text"
             value={operatorId}
             onChange={(e) => setOperatorId(e.target.value)}
-            className="w-full bg-graphite-900 border border-graphite-700 text-white rounded p-2 text-sm focus:outline-none focus:border-industrial-yellow"
+            className="rm-input"
             placeholder="e.g. OP105"
             required
           />
         </div>
         
         <div>
-          <label className="block text-xs font-medium text-slate-400 uppercase mb-1">Site ID</label>
+          <label className="block text-[11px] font-bold text-rm-text-muted uppercase mb-1">Site Location ID</label>
           <input
             type="text"
             value={siteId}
             onChange={(e) => setSiteId(e.target.value)}
-            className="w-full bg-graphite-900 border border-graphite-700 text-white rounded p-2 text-sm focus:outline-none focus:border-industrial-yellow"
+            className="rm-input"
             placeholder="e.g. S001"
             required
           />
         </div>
         
         <div>
-          <label className="block text-xs font-medium text-slate-400 uppercase mb-1">Starting Engine Hours</label>
+          <label className="block text-[11px] font-bold text-rm-text-muted uppercase mb-1">Starting Engine Hours</label>
           <input
             type="number"
             min="0"
             step="0.1"
             value={engineHours}
             onChange={(e) => setEngineHours(e.target.value ? Number(e.target.value) : "")}
-            className="w-full bg-graphite-900 border border-graphite-700 text-white rounded p-2 text-sm focus:outline-none focus:border-industrial-yellow"
+            className="rm-input font-mono"
             placeholder="0.0"
             required
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-slate-400 uppercase mb-1">Rental Duration (days)</label>
+          <label className="block text-[11px] font-bold text-rm-text-muted uppercase mb-1">Rental Duration (days)</label>
           <input
             type="number"
             min="1"
             step="1"
             value={durationDays}
             onChange={(e) => setDurationDays(e.target.value ? Number(e.target.value) : "")}
-            className="w-full bg-graphite-900 border border-graphite-700 text-white rounded p-2 text-sm focus:outline-none focus:border-industrial-yellow"
+            className="rm-input font-mono"
             placeholder="14"
           />
         </div>
@@ -127,9 +131,9 @@ export function CheckoutForm({ equipmentId }: CheckoutFormProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-industrial-yellow hover:bg-industrial-yellow-hover text-graphite-900 font-bold py-2 px-4 rounded text-sm transition-colors disabled:opacity-50"
+            className="rm-btn-primary w-full justify-center py-2.5"
           >
-            {loading ? "PROCESSING..." : "CONFIRM CHECK-OUT"}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm & Check Out"}
           </button>
         </div>
       </form>

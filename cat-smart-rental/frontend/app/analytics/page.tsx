@@ -1,7 +1,8 @@
 import { getDemandForecast, getAnomalies } from "@/lib/api";
 import Link from "next/link";
-import { LineChart, Box, TrendingUp, TrendingDown, Minus, AlertOctagon } from "lucide-react";
+import { LineChart, Box, TrendingUp, TrendingDown, Minus, AlertOctagon, Sparkles, Cpu } from "lucide-react";
 import { DemandForecastChart } from "@/components/dashboard/DemandForecastChart";
+import { AnomalyNarrative } from "@/components/ai/AnomalyNarrative";
 
 const TREND_ICON = {
   increasing: TrendingUp,
@@ -9,16 +10,16 @@ const TREND_ICON = {
   stable: Minus,
 };
 
-const TREND_STYLE = {
-  increasing: "text-industrial-yellow bg-industrial-yellow/10 border-industrial-yellow/30",
-  decreasing: "text-slate-400 bg-slate-500/10 border-slate-500/30",
-  stable: "text-green-400 bg-green-500/10 border-green-500/30",
+const TREND_BADGE = {
+  increasing: "rm-badge rm-badge-high",
+  decreasing: "rm-badge rm-badge-low",
+  stable: "rm-badge rm-badge-available",
 };
 
-const SEVERITY_STYLE = {
-  high: "text-red-400 bg-red-500/10 border-red-500/30",
-  medium: "text-amber-400 bg-amber-500/10 border-amber-500/30",
-  low: "text-slate-400 bg-slate-500/10 border-slate-500/30",
+const SEVERITY_BADGE = {
+  high: "rm-badge rm-badge-high",
+  medium: "rm-badge rm-badge-medium",
+  low: "rm-badge rm-badge-low",
 };
 
 const ANOMALY_LABEL: Record<string, string> = {
@@ -41,25 +42,35 @@ export default async function AnalyticsPage() {
     };
 
     return (
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="bg-graphite-900 border border-graphite-700 rounded-md p-6 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto space-y-6 rm-page-enter">
+        {/* Header */}
+        <div className="rm-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-              <LineChart className="w-6 h-6 text-industrial-yellow" /> DEMAND ANALYTICS
+            <h1 className="rm-section-heading text-2xl">
+              Demand <span className="accent">Analytics</span>
             </h1>
-            <p className="text-slate-400 mt-1 text-sm">
-              Historical engine-hour trends by site and equipment type, from usage telemetry
+            <p className="text-rm-text-secondary text-sm mt-1">
+              Historical engine-hour trends by site and equipment type, backed by telemetry
             </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-rm-text-muted bg-rm-surface px-3 py-1.5 rounded-lg border border-rm-border">
+              {forecast.length} Regional Forecasts
+            </span>
           </div>
         </div>
 
-        <div className="bg-graphite-900 border border-graphite-700 rounded-md p-6">
-          <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
-            Average Daily Engine Hours by Site &amp; Type
-          </h3>
+        {/* Forecast Chart */}
+        <div className="rm-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-bold text-rm-text-primary uppercase tracking-wider">
+              Average Daily Engine Hours by Site &amp; Type
+            </h3>
+            <span className="text-xs text-rm-text-muted">Telemetry-based trends</span>
+          </div>
           {forecast.length === 0 ? (
-            <div className="py-12 text-center text-slate-500">
-              <Box className="w-8 h-8 mx-auto mb-3 text-slate-600" />
+            <div className="py-12 text-center text-rm-text-muted">
+              <Box className="w-8 h-8 mx-auto mb-2 text-slate-300" />
               No usage data available to forecast from yet.
             </div>
           ) : (
@@ -67,25 +78,28 @@ export default async function AnalyticsPage() {
           )}
         </div>
 
-        <div className="bg-graphite-900 border border-graphite-700 rounded-md overflow-hidden">
-          <div className="p-4 border-b border-graphite-700 bg-graphite-800">
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
+        {/* Pre-positioning Recommendations */}
+        <div className="rm-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-rm-border bg-slate-50 flex items-center justify-between">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-rm-text-secondary flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-rm-red" />
               Pre-Positioning Recommendations
             </h3>
+            <span className="text-xs text-rm-text-muted">{actionable.length} Suggestions</span>
           </div>
           {actionable.length === 0 ? (
-            <div className="py-8 text-center text-slate-500">No action needed right now.</div>
+            <div className="py-8 text-center text-rm-text-muted text-sm">No action needed right now. All site allocations are balanced.</div>
           ) : (
-            <div className="divide-y divide-graphite-700/50">
+            <div className="divide-y divide-rm-border-light">
               {actionable.map((f) => {
                 const Icon = TREND_ICON[f.trend];
                 return (
-                  <div key={`${f.site_id}-${f.equipment_type}`} className="p-4 flex items-start gap-3">
-                    <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2 py-0.5 rounded-sm border shrink-0 ${TREND_STYLE[f.trend]}`}>
-                      <Icon className="w-3 h-3" />
+                  <div key={`${f.site_id}-${f.equipment_type}`} className="p-4 sm:px-6 flex items-start gap-3 hover:bg-slate-50 transition-colors">
+                    <span className={`shrink-0 ${TREND_BADGE[f.trend]}`}>
+                      <Icon className="w-3 h-3 inline-block mr-1" />
                       {f.trend.toUpperCase()}
                     </span>
-                    <p className="text-sm text-slate-300">{f.recommended_action}</p>
+                    <p className="text-sm text-rm-text-primary font-medium">{f.recommended_action}</p>
                   </div>
                 );
               })}
@@ -93,58 +107,63 @@ export default async function AnalyticsPage() {
           )}
         </div>
 
-        <div className="bg-graphite-900 border border-graphite-700 rounded-md overflow-hidden">
-          <div className="p-4 border-b border-graphite-700 bg-graphite-800 flex items-center justify-between flex-wrap gap-3">
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider flex items-center gap-2">
-              <AlertOctagon className="w-4 h-4 text-industrial-yellow" />
-              Detected Anomalies
+        {/* Detected Anomalies */}
+        <div className="rm-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-rm-border bg-slate-50 flex items-center justify-between flex-wrap gap-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-rm-text-secondary flex items-center gap-2">
+              <AlertOctagon className="w-4 h-4 text-rm-red" />
+              Detected Anomalies &amp; GenAI Advisories
             </h3>
             <div className="flex gap-2">
-              <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2 py-0.5 rounded-sm border ${SEVERITY_STYLE.high}`}>
+              <span className="rm-badge rm-badge-high">
                 {severityCounts.high} HIGH
               </span>
-              <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2 py-0.5 rounded-sm border ${SEVERITY_STYLE.medium}`}>
+              <span className="rm-badge rm-badge-medium">
                 {severityCounts.medium} MEDIUM
               </span>
-              <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2 py-0.5 rounded-sm border ${SEVERITY_STYLE.low}`}>
+              <span className="rm-badge rm-badge-low">
                 {severityCounts.low} LOW
               </span>
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left whitespace-nowrap">
-              <thead className="text-xs text-slate-400 uppercase bg-graphite-950/50">
+            <table className="rm-table">
+              <thead>
                 <tr>
-                  <th className="px-5 py-3 font-medium">Asset</th>
-                  <th className="px-5 py-3 font-medium">Type</th>
-                  <th className="px-5 py-3 font-medium">Site</th>
-                  <th className="px-5 py-3 font-medium">Anomaly</th>
-                  <th className="px-5 py-3 font-medium">Detail</th>
-                  <th className="px-5 py-3 font-medium text-center">Severity</th>
+                  <th>Asset</th>
+                  <th>Type</th>
+                  <th>Site</th>
+                  <th>Anomaly Type</th>
+                  <th>Telemetry Detail &amp; GenAI Advisory</th>
+                  <th className="text-center">Severity</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-graphite-700/50">
+              <tbody>
                 {anomalies.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-5 py-12 text-center text-slate-500">
-                      <Box className="w-8 h-8 mx-auto mb-3 text-slate-600" />
+                    <td colSpan={6} className="py-12 text-center text-rm-text-muted">
+                      <Box className="w-8 h-8 mx-auto mb-2 text-slate-300" />
                       No anomalies detected in the current fleet.
                     </td>
                   </tr>
                 ) : (
                   anomalies.map((a, i) => (
-                    <tr key={`${a.equipment_id}-${a.anomaly_type}-${i}`} className="hover:bg-graphite-800/50 transition-colors">
-                      <td className="px-5 py-3 font-medium">
-                        <Link href={`/equipment/${a.equipment_id}`} className="text-industrial-yellow hover:underline">
+                    <tr key={`${a.equipment_id}-${a.anomaly_type}-${i}`}>
+                      <td className="font-bold">
+                        <Link href={`/equipment/${a.equipment_id}`} className="text-rm-red hover:underline font-mono inline-flex items-center gap-1.5">
+                          <Cpu className="w-3.5 h-3.5 text-rm-text-muted" />
                           {a.equipment_id}
                         </Link>
                       </td>
-                      <td className="px-5 py-3 text-slate-300">{a.equipment_type}</td>
-                      <td className="px-5 py-3 text-slate-300">{a.site_id ?? "-"}</td>
-                      <td className="px-5 py-3 text-slate-300">{ANOMALY_LABEL[a.anomaly_type] ?? a.anomaly_type}</td>
-                      <td className="px-5 py-3 text-slate-400 whitespace-normal">{a.detail}</td>
-                      <td className="px-5 py-3 text-center">
-                        <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2 py-0.5 rounded-sm border ${SEVERITY_STYLE[a.severity]}`}>
+                      <td className="font-medium text-rm-text-primary">{a.equipment_type}</td>
+                      <td className="text-rm-text-secondary">{a.site_id ?? "-"}</td>
+                      <td className="font-semibold text-rm-text-primary">{ANOMALY_LABEL[a.anomaly_type] ?? a.anomaly_type}</td>
+                      <td className="whitespace-normal max-w-sm">
+                        <div className="text-xs text-rm-text-secondary mb-1">{a.detail}</div>
+                        <AnomalyNarrative anomaly={a} />
+                      </td>
+                      <td className="text-center">
+                        <span className={SEVERITY_BADGE[a.severity]}>
                           {a.severity.toUpperCase()}
                         </span>
                       </td>
@@ -159,9 +178,9 @@ export default async function AnalyticsPage() {
     );
   } catch (error) {
     return (
-      <div className="max-w-7xl mx-auto p-8 text-center bg-graphite-900 rounded-xl shadow-sm border border-red-500/30">
-        <h2 className="text-xl font-bold text-red-500 mb-2">Error Loading Analytics</h2>
-        <p className="text-slate-400">Could not connect to telemetry feed.</p>
+      <div className="max-w-4xl mx-auto p-8 text-center bg-white rounded-2xl shadow-sm border border-red-200">
+        <h2 className="text-xl font-bold text-rm-red mb-2">Error Loading Analytics</h2>
+        <p className="text-rm-text-secondary text-sm">Could not connect to telemetry feed.</p>
       </div>
     );
   }

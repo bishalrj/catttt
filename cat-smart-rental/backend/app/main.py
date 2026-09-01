@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import equipment, dashboard, rentals, alerts, usage_logs, forecast, anomalies
+from app.routers import equipment, dashboard, rentals, alerts, usage_logs, forecast, anomalies, ai, lifecycle
 
 import os
 
@@ -30,6 +30,8 @@ app.include_router(alerts.router)
 app.include_router(usage_logs.router)
 app.include_router(forecast.router)
 app.include_router(anomalies.router)
+app.include_router(ai.router)
+app.include_router(lifecycle.router)
 
 @app.get("/health")
 def health_check():

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Calendar, AlertTriangle, Clock, ChevronDown, ChevronRight, ArrowRight } from "lucide-react";
+import { Calendar, AlertTriangle, Clock, ChevronDown, ChevronRight, ArrowRight, Cpu } from "lucide-react";
 import { OverdueAlert } from "@/lib/types";
 
 function impactText(alert: OverdueAlert): string {
@@ -12,13 +12,13 @@ function impactText(alert: OverdueAlert): string {
     return `This asset is ${days} day(s) past its expected return date, accruing extra rental cost and blocking reallocation to another site.`;
   }
   const days = alert.days_until_due !== null ? `${alert.days_until_due}` : "a few";
-  return `This asset is due back in ${days} day(s). Plan the check-in now so it doesn't slip into overdue.`;
+  return `This asset is due back in ${days} day(s). Plan the check-in now so it doesn't slip into overdue status.`;
 }
 
 function recommendationText(alert: OverdueAlert): string {
   const operator = alert.last_operator_id ?? "the assigned operator";
   if (alert.alert_type === "OVERDUE") {
-    return `Contact ${operator} to confirm the return, or check the equipment back in if it's already idle on site.`;
+    return `Contact ${operator} to confirm return or check in if idle on site.`;
   }
   return `Confirm with ${operator} whether the rental needs extending before the return window closes.`;
 }
@@ -29,51 +29,54 @@ export function AlertRow({ alert }: { alert: OverdueAlert }) {
   return (
     <>
       <tr
-        className="hover:bg-graphite-800/50 transition-colors cursor-pointer"
+        className="hover:bg-slate-50 transition-colors cursor-pointer border-b border-rm-border-light"
         onClick={() => setOpen((o) => !o)}
       >
-        <td className="px-5 py-3">
-          {open ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
+        <td className="w-8 pl-4">
+          {open ? <ChevronDown className="w-4 h-4 text-rm-text-muted" /> : <ChevronRight className="w-4 h-4 text-rm-text-muted" />}
         </td>
-        <td className="px-5 py-3 font-medium">
+        <td className="font-bold">
           <Link
             href={`/equipment/${alert.equipment_id}`}
-            className="text-industrial-yellow hover:underline"
+            className="text-rm-red hover:underline font-mono inline-flex items-center gap-1.5"
             onClick={(e) => e.stopPropagation()}
           >
+            <Cpu className="w-3.5 h-3.5 text-rm-text-muted" />
             {alert.equipment_id}
           </Link>
         </td>
-        <td className="px-5 py-3 text-slate-300">{alert.equipment_type}</td>
-        <td className="px-5 py-3 text-slate-300">{alert.site_id ?? "-"}</td>
-        <td className="px-5 py-3 text-slate-400">{alert.last_operator_id ?? "-"}</td>
-        <td className="px-5 py-3 text-slate-300">
+        <td className="font-medium text-rm-text-primary">{alert.equipment_type}</td>
+        <td className="text-rm-text-secondary">{alert.site_id ?? "-"}</td>
+        <td className="text-rm-text-secondary text-xs">{alert.last_operator_id ?? "-"}</td>
+        <td className="text-rm-text-secondary text-xs">
           {alert.expected_return_date ? (
             <div className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-slate-500" />
+              <Calendar className="w-3.5 h-3.5 text-rm-text-muted" />
               {format(new Date(alert.expected_return_date), "MM/dd/yy HH:mm")}
             </div>
           ) : (
             "-"
           )}
         </td>
-        <td className="px-5 py-3 text-slate-300 text-right font-mono">
-          {alert.alert_type === "OVERDUE"
-            ? alert.days_overdue !== null
-              ? `+${alert.days_overdue} d`
-              : "-"
-            : alert.days_until_due !== null
-            ? `${alert.days_until_due} d left`
-            : "-"}
-        </td>
-        <td className="px-5 py-3 text-center">
+        <td className="text-right font-mono font-semibold">
           {alert.alert_type === "OVERDUE" ? (
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/30 px-2 py-0.5 rounded-sm">
+            <span className="text-rm-red font-bold">
+              {alert.days_overdue !== null ? `+${alert.days_overdue} d` : "-"}
+            </span>
+          ) : (
+            <span className="text-amber-600 font-bold">
+              {alert.days_until_due !== null ? `${alert.days_until_due} d left` : "-"}
+            </span>
+          )}
+        </td>
+        <td className="text-center">
+          {alert.alert_type === "OVERDUE" ? (
+            <span className="rm-badge rm-badge-overdue">
               <AlertTriangle className="w-3 h-3" />
               OVERDUE
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-sm">
+            <span className="rm-badge rm-badge-maintenance">
               <Clock className="w-3 h-3" />
               DUE SOON
             </span>
@@ -81,23 +84,23 @@ export function AlertRow({ alert }: { alert: OverdueAlert }) {
         </td>
       </tr>
       {open && (
-        <tr className="bg-graphite-950/40">
-          <td colSpan={8} className="px-5 py-4">
+        <tr className="bg-slate-50">
+          <td colSpan={8} className="px-6 py-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Impact</p>
-                <p className="text-sm text-slate-300">{impactText(alert)}</p>
+              <div className="bg-white p-3.5 rounded-lg border border-rm-border">
+                <p className="text-[11px] font-bold text-rm-text-muted uppercase tracking-wider mb-1">Impact Analysis</p>
+                <p className="text-xs text-rm-text-primary leading-relaxed">{impactText(alert)}</p>
               </div>
-              <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Recommendation</p>
-                <p className="text-sm text-slate-300">{recommendationText(alert)}</p>
+              <div className="bg-white p-3.5 rounded-lg border border-rm-border">
+                <p className="text-[11px] font-bold text-rm-text-muted uppercase tracking-wider mb-1">Recommended Action</p>
+                <p className="text-xs text-rm-text-primary leading-relaxed">{recommendationText(alert)}</p>
               </div>
-              <div className="flex md:justify-end md:items-start">
+              <div className="flex md:justify-end md:items-center">
                 <Link
                   href={`/equipment/${alert.equipment_id}`}
-                  className="inline-flex items-center gap-2 bg-industrial-yellow hover:bg-industrial-yellow-hover text-graphite-900 font-bold py-2 px-4 rounded text-sm transition-colors"
+                  className="rm-btn-primary text-xs"
                 >
-                  View Equipment <ArrowRight className="w-4 h-4" />
+                  Manage Equipment <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>

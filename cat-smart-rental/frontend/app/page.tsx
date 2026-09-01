@@ -1,13 +1,13 @@
 import { getDashboardSummary, getEquipmentList, getSiteUsageSummary } from "@/lib/api";
 import { KPICards } from "@/components/dashboard/KPICards";
 import Link from "next/link";
-import { ArrowRight, LayoutDashboard, Box } from "lucide-react";
+import { ArrowRight, Box, ChevronRight, Sparkles, Truck, ShieldAlert, Zap } from "lucide-react";
 
-const STATUS_STYLE: Record<string, string> = {
-  AVAILABLE: "text-green-400 bg-green-500/10 border-green-500/30",
-  ACTIVE: "text-blue-400 bg-blue-500/10 border-blue-500/30",
-  OVERDUE: "text-red-400 bg-red-500/10 border-red-500/30",
-  MAINTENANCE: "text-yellow-400 bg-yellow-500/10 border-yellow-500/30",
+const STATUS_BADGE: Record<string, { label: string; className: string }> = {
+  AVAILABLE: { label: "Available", className: "rm-badge rm-badge-available" },
+  ACTIVE: { label: "Active", className: "rm-badge rm-badge-active" },
+  OVERDUE: { label: "Overdue", className: "rm-badge rm-badge-overdue" },
+  MAINTENANCE: { label: "Maintenance", className: "rm-badge rm-badge-maintenance" },
 };
 
 export default async function DashboardPage() {
@@ -15,105 +15,183 @@ export default async function DashboardPage() {
     const summary = await getDashboardSummary();
     const equipment = await getEquipmentList();
     const siteUsage = await getSiteUsageSummary();
-    const recent = equipment.slice(0, 5); // Just grab first 5 for recent
+    const recent = equipment.slice(0, 6);
 
     return (
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="bg-graphite-900 border border-graphite-700 rounded-md p-6">
-          <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-            <LayoutDashboard className="w-6 h-6 text-industrial-yellow" /> DASHBOARD
-          </h1>
-          <p className="text-slate-400 mt-1 text-sm">Overview of your rental fleet</p>
+      <div className="max-w-7xl mx-auto space-y-8 rm-page-enter">
+        {/* RentoMojo-style Hero Banner */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 via-red-500 to-orange-500 text-white p-7 sm:p-9 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="space-y-2 z-10 max-w-xl">
+            <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase">
+              <Sparkles className="w-3.5 h-3.5 text-yellow-200" />
+              Smart CAT Fleet 2.0
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Industrial Fleet Rental &amp; AI Telemetry
+            </h1>
+            <p className="text-red-100 text-sm sm:text-base leading-relaxed">
+              Track real-time machine operations, forecast regional demand, and generate instant generative fleet advisories.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3 z-10">
+            <Link
+              href="/equipment"
+              className="bg-white text-rm-red font-bold px-5 py-2.5 rounded-xl hover:bg-red-50 transition-all shadow-sm inline-flex items-center gap-2 text-sm"
+            >
+              <Truck className="w-4 h-4" /> Browse Equipment
+            </Link>
+            <Link
+              href="/chat"
+              className="bg-black/30 backdrop-blur-md text-white border border-white/30 font-semibold px-5 py-2.5 rounded-xl hover:bg-black/40 transition-all text-sm inline-flex items-center gap-2"
+            >
+              <Zap className="w-4 h-4 text-yellow-300" /> Ask FleetAI
+            </Link>
+          </div>
         </div>
 
-        <KPICards summary={summary} />
+        {/* Section 1: KPI Stats */}
+        <div className="space-y-3">
+          <h2 className="rm-section-heading">
+            Fleet <span className="accent">Performance</span>
+          </h2>
+          <KPICards summary={summary} />
+        </div>
 
-        <div className="bg-graphite-900 border border-graphite-700 rounded-md overflow-hidden">
-          <div className="p-4 border-b border-graphite-700 bg-graphite-800 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Recent Equipment</h3>
-            <Link href="/equipment" className="text-sm text-industrial-yellow hover:underline font-medium flex items-center gap-1">
-              View all <ArrowRight className="h-4 w-4" />
+        {/* Section 2: Equipment Grid (RentoMojo Product / Category style) */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="rm-section-heading">
+              Featured <span className="accent">Equipment</span>
+            </h2>
+            <Link
+              href="/equipment"
+              className="text-sm font-semibold text-rm-red hover:text-rm-red-hover flex items-center gap-1 group"
+            >
+              View all fleet <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left whitespace-nowrap">
-              <thead className="text-xs text-slate-400 uppercase bg-graphite-950/50">
-                <tr>
-                  <th className="px-5 py-3 font-medium">ID</th>
-                  <th className="px-5 py-3 font-medium">Type</th>
-                  <th className="px-5 py-3 font-medium">Status</th>
-                  <th className="px-5 py-3 font-medium">Site</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-graphite-700/50">
-                {recent.map((eq) => (
-                  <tr key={eq.equipment_id} className="hover:bg-graphite-800/50 transition-colors">
-                    <td className="px-5 py-3 font-medium">
-                      <Link href={`/equipment/${eq.equipment_id}`} className="text-industrial-yellow hover:underline">
-                        {eq.equipment_id}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {recent.map((eq) => {
+              const badge = STATUS_BADGE[eq.status] || { label: eq.status, className: "rm-badge rm-badge-low" };
+              return (
+                <div key={eq.equipment_id} className="rm-product-card flex flex-col justify-between">
+                  <div className="rm-card-image relative p-6 bg-slate-50 flex items-center justify-center">
+                    <div className="w-20 h-20 rounded-2xl bg-white border border-rm-border flex items-center justify-center shadow-sm">
+                      <Truck className="w-10 h-10 text-rm-red" />
+                    </div>
+                    <div className="absolute top-3 right-3">
+                      <span className={badge.className}>{badge.label}</span>
+                    </div>
+                    <div className="absolute bottom-2 left-3 text-[11px] font-mono text-rm-text-muted">
+                      ID: {eq.equipment_id}
+                    </div>
+                  </div>
+                  <div className="rm-card-body flex-1">
+                    <h3 className="rm-card-name text-base font-bold text-rm-text-primary">
+                      {eq.equipment_type}
+                    </h3>
+                    <p className="text-xs text-rm-text-secondary mt-0.5">
+                      Site: <span className="font-semibold text-rm-text-primary">{eq.site_id || "Unassigned"}</span>
+                    </p>
+                    <div className="mt-3 flex items-center justify-between pt-2 border-t border-rm-border-light">
+                      <div>
+                        <span className="rm-card-price-label block">Runtime</span>
+                        <span className="rm-card-price text-sm font-semibold">{eq.operating_days || 0} days</span>
+                      </div>
+                      <Link
+                        href={`/equipment/${eq.equipment_id}/lifecycle`}
+                        className="text-xs font-bold text-rm-purple bg-rm-purple-light hover:bg-purple-100 px-2.5 py-1 rounded-md transition-colors"
+                      >
+                        Lifecycle ROI &rarr;
                       </Link>
-                    </td>
-                    <td className="px-5 py-3 text-slate-300">{eq.equipment_type}</td>
-                    <td className="px-5 py-3">
-                      <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2 py-0.5 rounded-sm border ${STATUS_STYLE[eq.status]}`}>
-                        {eq.status}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3 text-slate-300">{eq.site_id || <span className="text-slate-600">-</span>}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+                  </div>
+                  <Link
+                    href={`/equipment/${eq.equipment_id}`}
+                    className="rm-card-cta flex items-center justify-center gap-1.5 bg-slate-50 hover:bg-rm-red-light transition-colors"
+                  >
+                    View Asset Telemetry <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        <div className="bg-graphite-900 border border-graphite-700 rounded-md overflow-hidden">
-          <div className="p-4 border-b border-graphite-700 bg-graphite-800">
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Usage by Site</h3>
-          </div>
+        {/* Section 3: Usage by Site (Clean Table Card) */}
+        <div className="space-y-4">
+          <h2 className="rm-section-heading">
+            Site <span className="accent">Utilization</span>
+          </h2>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left whitespace-nowrap">
-              <thead className="text-xs text-slate-400 uppercase bg-graphite-950/50">
-                <tr>
-                  <th className="px-5 py-3 font-medium">Site</th>
-                  <th className="px-5 py-3 font-medium">Equipment</th>
-                  <th className="px-5 py-3 font-medium text-right">Runtime Hours</th>
-                  <th className="px-5 py-3 font-medium text-right">Fuel (L)</th>
-                  <th className="px-5 py-3 font-medium text-right">Downtime Hours</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-graphite-700/50">
-                {siteUsage.length === 0 ? (
+          <div className="rm-card overflow-hidden">
+            <div className="px-6 py-4 border-b border-rm-border bg-slate-50/70 flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-rm-text-secondary">
+                Regional Deployment Telemetry
+              </span>
+              <span className="text-xs text-rm-text-muted">
+                {siteUsage.length} active work sites
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="rm-table">
+                <thead>
                   <tr>
-                    <td colSpan={5} className="px-5 py-12 text-center text-slate-500">
-                      <Box className="w-8 h-8 mx-auto mb-3 text-slate-600" />
-                      No usage data recorded yet.
-                    </td>
+                    <th>Site Location</th>
+                    <th>Equipment Deployed</th>
+                    <th className="text-right">Runtime (Hours)</th>
+                    <th className="text-right">Fuel Used (Liters)</th>
+                    <th className="text-right">Downtime (Hours)</th>
                   </tr>
-                ) : (
-                  siteUsage.map((site) => (
-                    <tr key={site.site_id} className="hover:bg-graphite-800/50 transition-colors">
-                      <td className="px-5 py-3 font-medium text-white">{site.site_id}</td>
-                      <td className="px-5 py-3 text-slate-300">{site.equipment_count}</td>
-                      <td className="px-5 py-3 text-slate-300 text-right font-mono">{site.total_operating_hours.toFixed(1)}</td>
-                      <td className="px-5 py-3 text-slate-300 text-right font-mono">{site.total_fuel_liters.toFixed(1)}</td>
-                      <td className="px-5 py-3 text-slate-300 text-right font-mono">{site.total_downtime_hours.toFixed(1)}</td>
+                </thead>
+                <tbody>
+                  {siteUsage.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="py-12 text-center text-rm-text-muted">
+                        <Box className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                        No site telemetry logs recorded yet.
+                      </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    siteUsage.map((site) => (
+                      <tr key={site.site_id}>
+                        <td className="font-bold text-rm-text-primary flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-rm-red"></span>
+                          {site.site_id}
+                        </td>
+                        <td className="text-rm-text-secondary">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-rm-surface text-xs font-semibold">
+                            {site.equipment_count} units
+                          </span>
+                        </td>
+                        <td className="text-right font-mono font-semibold text-rm-text-primary">
+                          {site.total_operating_hours.toFixed(1)}h
+                        </td>
+                        <td className="text-right font-mono text-rm-text-secondary">
+                          {site.total_fuel_liters.toFixed(1)} L
+                        </td>
+                        <td className="text-right font-mono font-semibold">
+                          <span className={site.total_downtime_hours > 0 ? "text-amber-600 font-bold" : "text-rm-text-muted"}>
+                            {site.total_downtime_hours.toFixed(1)}h
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     );
   } catch (error) {
     return (
-      <div className="max-w-6xl mx-auto p-8 text-center bg-graphite-900 rounded-xl shadow-sm border border-red-500/30">
-        <h2 className="text-xl font-bold text-red-500 mb-2">Error Loading Dashboard</h2>
-        <p className="text-slate-400">Could not connect to the API. Ensure the backend is running.</p>
+      <div className="max-w-4xl mx-auto p-8 text-center bg-white rounded-2xl shadow-sm border border-red-200">
+        <h2 className="text-xl font-bold text-rm-red mb-2">Error Loading Dashboard</h2>
+        <p className="text-rm-text-secondary text-sm">Could not connect to the API. Ensure backend is running.</p>
       </div>
     );
   }

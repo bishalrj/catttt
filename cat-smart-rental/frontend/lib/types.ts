@@ -123,3 +123,66 @@ export interface OverdueAlert {
   days_overdue: number | null;
   days_until_due: number | null;
 }
+
+// ── AI / Chat ─────────────────────────────────────────────────────────────
+
+export type ChatRole = "user" | "assistant";
+
+export interface ChatMessage {
+  id: string;
+  role: ChatRole;
+  content: string;
+  timestamp: string;
+}
+
+// ── Asset Lifecycle ──────────────────────────────────────────────────────
+
+export interface LifecycleROI {
+  roi_score: number | null;
+  grade: "A" | "B" | "C" | "D" | null;
+  label: string;
+}
+
+export interface LifecycleEvent {
+  rental_id: number;
+  site_id: string;
+  operator_id: string;
+  checkout_time: string | null;
+  checkin_time: string | null;
+  duration_days: number | null;
+  status: "completed" | "active";
+  engine_hours: number;
+  idle_hours: number;
+  fuel_used_liters: number;
+  downtime_hours: number;
+  utilisation_pct: number;
+  cumulative_engine_hours: number;
+  roi: LifecycleROI;
+}
+
+export interface RefurbishmentBreakdown {
+  wear_penalty: number;
+  downtime_penalty: number;
+  anomaly_penalty: number;
+  utilisation_bonus: number;
+}
+
+export interface RefurbishmentScore {
+  score: number;
+  band: "Healthy" | "Monitor" | "Refurbish" | "Retire";
+  recommendation: string;
+  breakdown: RefurbishmentBreakdown;
+}
+
+export interface LifecycleSummary {
+  equipment_id: string;
+  equipment_type: string;
+  current_status: EquipmentStatus;
+  cumulative_engine_hours: number;
+  total_rentals: number;
+  completed_rentals: number;
+  refurbishment: RefurbishmentScore;
+  active_anomalies: Anomaly[];
+  timeline: LifecycleEvent[];
+}
+

@@ -1,4 +1,4 @@
-import { Equipment, DashboardSummary, CheckoutRequest, CheckinRequest, RentalHistory, OverdueAlert, UsageLog, UsageLogSummary, SiteUsageSummary, DemandForecastEntry, Anomaly } from "./types";
+import { Equipment, DashboardSummary, CheckoutRequest, CheckinRequest, RentalHistory, OverdueAlert, UsageLog, UsageLogSummary, SiteUsageSummary, DemandForecastEntry, Anomaly, LifecycleSummary } from "./types";
 
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 const API_URL = rawApiUrl.replace(/\/$/, "");
@@ -138,3 +138,40 @@ export async function getAnomalies(): Promise<Anomaly[]> {
   }
   return res.json();
 }
+
+// ── GenAI Explain ─────────────────────────────────────────────────────────
+
+export async function explainAnomaly(payload: Record<string, unknown>): Promise<string> {
+  const res = await fetch(`${API_URL}/ai/explain`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ payload }),
+  });
+  if (!res.ok) throw new Error("Failed to generate explanation");
+  const data = await res.json();
+  return data.narrative as string;
+}
+
+// ── Fleet Chat ────────────────────────────────────────────────────────────
+
+export async function sendChatMessage(message: string): Promise<string> {
+  const res = await fetch(`${API_URL}/ai/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message }),
+  });
+  if (!res.ok) throw new Error("Chat request failed");
+  const data = await res.json();
+  return data.answer as string;
+}
+
+// ── Asset Lifecycle ───────────────────────────────────────────────────────
+
+export async function getEquipmentLifecycle(id: string): Promise<LifecycleSummary> {
+  const res = await fetch(`${API_URL}/equipment/${id}/lifecycle`, {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`Failed to fetch lifecycle for ${id}`);
+  return res.json();
+}
+

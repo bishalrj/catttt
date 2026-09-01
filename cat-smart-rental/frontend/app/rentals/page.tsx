@@ -1,49 +1,53 @@
 import { getRentals } from "@/lib/api";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Clock, Activity, Settings2, Box, Calendar } from "lucide-react";
+import { Clock, Activity, Box, Calendar, Truck } from "lucide-react";
 
 export default async function RentalsPage() {
   try {
     const rentals = await getRentals();
 
     return (
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="bg-graphite-900 border border-graphite-700 rounded-md p-6 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto space-y-6 rm-page-enter">
+        {/* Header */}
+        <div className="rm-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-              <Activity className="w-6 h-6 text-industrial-yellow" /> RENTAL OPERATIONS
+            <h1 className="rm-section-heading text-2xl">
+              Rental <span className="accent">Operations</span>
             </h1>
-            <p className="text-slate-400 mt-1 text-sm">Historical equipment movements and active rentals</p>
+            <p className="text-rm-text-secondary text-sm mt-1">
+              Historical equipment movements, site checkout logs, and active field assignments
+            </p>
           </div>
-          <div className="flex gap-2">
-            <button className="bg-graphite-800 hover:bg-graphite-700 text-slate-300 border border-graphite-700 px-3 py-1.5 rounded text-sm transition-colors flex items-center gap-2">
-              <Settings2 className="w-4 h-4" /> Filters
-            </button>
+          <div>
+            <span className="text-xs font-semibold text-rm-text-muted bg-rm-surface px-3 py-1.5 rounded-lg border border-rm-border">
+              {rentals.length} Operations Recorded
+            </span>
           </div>
         </div>
 
-        <div className="bg-graphite-900 border border-graphite-700 rounded-md overflow-hidden">
+        {/* Table Card */}
+        <div className="rm-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left whitespace-nowrap">
-              <thead className="text-xs text-slate-400 uppercase bg-graphite-950/50">
+            <table className="rm-table">
+              <thead>
                 <tr>
-                  <th className="px-5 py-3 font-medium">Asset</th>
-                  <th className="px-5 py-3 font-medium">Site</th>
-                  <th className="px-5 py-3 font-medium">Operator</th>
-                  <th className="px-5 py-3 font-medium">Check-Out</th>
-                  <th className="px-5 py-3 font-medium">Check-In</th>
-                  <th className="px-5 py-3 font-medium text-right">Duration</th>
-                  <th className="px-5 py-3 font-medium text-right">Runtime</th>
-                  <th className="px-5 py-3 font-medium text-right">Idle</th>
-                  <th className="px-5 py-3 font-medium text-center">Status</th>
+                  <th>Asset ID</th>
+                  <th>Site Location</th>
+                  <th>Operator</th>
+                  <th>Check-Out</th>
+                  <th>Check-In</th>
+                  <th className="text-right">Duration</th>
+                  <th className="text-right">Runtime</th>
+                  <th className="text-right">Idle Time</th>
+                  <th className="text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-graphite-700/50">
+              <tbody>
                 {rentals.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="px-5 py-12 text-center text-slate-500">
-                      <Box className="w-8 h-8 mx-auto mb-3 text-slate-600" />
+                    <td colSpan={9} className="py-12 text-center text-rm-text-muted">
+                      <Box className="w-8 h-8 mx-auto mb-2 text-slate-300" />
                       No rental operations found.
                     </td>
                   </tr>
@@ -55,47 +59,49 @@ export default async function RentalsPage() {
                       : "-";
                     
                     return (
-                      <tr key={rental.id} className="hover:bg-graphite-800/50 transition-colors">
-                        <td className="px-5 py-3 font-medium">
-                          <Link href={`/equipment/${rental.equipment_id}`} className="text-industrial-yellow hover:underline">
+                      <tr key={rental.id}>
+                        <td className="font-bold">
+                          <Link href={`/equipment/${rental.equipment_id}`} className="text-rm-red hover:underline font-mono inline-flex items-center gap-1.5">
+                            <Truck className="w-3.5 h-3.5 text-rm-text-muted" />
                             {rental.equipment_id}
                           </Link>
                         </td>
-                        <td className="px-5 py-3 text-slate-300">{rental.site_id}</td>
-                        <td className="px-5 py-3 text-slate-400">{rental.operator_id}</td>
-                        <td className="px-5 py-3 text-slate-300">
-                          <div className="flex items-center gap-1.5">
-                            <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                            {format(new Date(rental.checkout_time), "MM/dd/yy HH:mm")}
-                          </div>
+                        <td className="font-medium text-rm-text-primary">{rental.site_id}</td>
+                        <td className="text-rm-text-secondary text-xs">{rental.operator_id}</td>
+                        <td className="text-rm-text-secondary text-xs">
+                          {rental.checkout_time ? (
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="w-3.5 h-3.5 text-rm-text-muted" />
+                              {format(new Date(rental.checkout_time), "MM/dd/yy HH:mm")}
+                            </div>
+                          ) : "-"}
                         </td>
-                        <td className="px-5 py-3 text-slate-300">
+                        <td className="text-rm-text-secondary text-xs">
                           {rental.checkin_time ? (
                             <div className="flex items-center gap-1.5">
-                              <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                              <Calendar className="w-3.5 h-3.5 text-rm-text-muted" />
                               {format(new Date(rental.checkin_time), "MM/dd/yy HH:mm")}
                             </div>
                           ) : (
-                            <span className="text-slate-500 italic">Active</span>
+                            <span className="text-rm-green font-semibold">Active in Field</span>
                           )}
                         </td>
-                        <td className="px-5 py-3 text-slate-300 text-right font-mono">
+                        <td className="text-rm-text-primary text-right font-mono font-medium">
                           {rental.rental_duration_days !== null ? `${rental.rental_duration_days} d` : "-"}
                         </td>
-                        <td className="px-5 py-3 text-slate-300 text-right font-mono">
+                        <td className="text-rm-text-primary text-right font-mono font-semibold">
                           {runtime !== "-" ? `${runtime} h` : "-"}
                         </td>
-                        <td className="px-5 py-3 text-slate-300 text-right font-mono">
+                        <td className="text-rm-text-secondary text-right font-mono">
                           {rental.idle_hours !== null ? `${rental.idle_hours} h` : "-"}
                         </td>
-                        <td className="px-5 py-3 text-center">
+                        <td className="text-center">
                           {isActive ? (
-                            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-green-400 bg-green-500/10 border border-green-500/30 px-2 py-0.5 rounded-sm">
-                              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                            <span className="rm-badge rm-badge-active">
                               ACTIVE
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 border border-slate-700 px-2 py-0.5 rounded-sm">
+                            <span className="rm-badge rm-badge-available">
                               COMPLETED
                             </span>
                           )}
@@ -112,9 +118,9 @@ export default async function RentalsPage() {
     );
   } catch (error) {
     return (
-      <div className="max-w-7xl mx-auto p-8 text-center bg-graphite-900 rounded-xl shadow-sm border border-red-500/30">
-        <h2 className="text-xl font-bold text-red-500 mb-2">Error Loading Operations</h2>
-        <p className="text-slate-400">Could not connect to telemetry feed.</p>
+      <div className="max-w-4xl mx-auto p-8 text-center bg-white rounded-2xl shadow-sm border border-red-200">
+        <h2 className="text-xl font-bold text-rm-red mb-2">Error Loading Operations</h2>
+        <p className="text-rm-text-secondary text-sm">Could not connect to telemetry feed.</p>
       </div>
     );
   }
