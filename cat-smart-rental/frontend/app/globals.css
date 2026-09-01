@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  /* Control Tower Theme */
+  --color-graphite-950: #141517;
+  --color-graphite-900: #1a1b1e;
+  --color-graphite-800: #25262b;
+  --color-graphite-700: #2c2e33;
+  --color-industrial-yellow: #fcc200;
+  --color-industrial-yellow-hover: #e5b000;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
