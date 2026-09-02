@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   MessageSquare,
@@ -145,7 +146,10 @@ export function SendAlertModal({
     }
   }, [open, defaultTemplate]);
 
-  if (!open) return null;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!open || !mounted) return null;
 
   // WhatsApp wa.me URL (works without any API — opens WhatsApp directly)
   const encodedMsg = encodeURIComponent(message);
@@ -185,7 +189,7 @@ export function SendAlertModal({
   const charCount = message.length;
   const canSend = cleanPhone.length >= 10 && message.trim().length > 0;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[1000] flex items-center justify-center p-4"
       style={{ background: "rgba(8,10,13,0.8)", backdropFilter: "blur(8px)" }}
@@ -359,6 +363,7 @@ export function SendAlertModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

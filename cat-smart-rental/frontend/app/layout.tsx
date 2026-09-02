@@ -16,15 +16,19 @@ export const metadata: Metadata = {
   description:
     "Caterpillar heavy machinery telematics, intelligent fleet rental management, and predictive AI analytics powered by Cat® VisionLink® 2.0",
   keywords: ["Caterpillar", "VisionLink", "fleet telematics", "equipment rental", "Cat FleetAI"],
+};
+
+export const viewport = {
   themeColor: "#ffcd11",
-  viewport: "width=device-width, initial-scale=1",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className="dark" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body
         className={`${inter.variable} flex h-screen bg-[#0d1117] text-[#f3f4f6] overflow-hidden`}
         style={{ fontFamily: "var(--font-inter), 'Inter', -apple-system, sans-serif" }}

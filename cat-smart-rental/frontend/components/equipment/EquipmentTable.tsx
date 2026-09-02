@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, Fragment } from "react";
 import Link from "next/link";
 import { EquipmentRowActions } from "@/components/equipment/EquipmentRowActions";
 import {
@@ -194,9 +194,8 @@ export function EquipmentTable({ equipment }: { equipment: Equipment[] }) {
                     eq.status === "MAINTENANCE" ? "maintenance" : "damage_risk";
 
                   return (
-                    <>
+                    <Fragment key={eq.equipment_id}>
                       <tr
-                        key={eq.equipment_id}
                         className="cursor-pointer"
                         onClick={() => setExpandedRow(isExpanded ? null : eq.equipment_id)}
                       >
@@ -319,7 +318,7 @@ export function EquipmentTable({ equipment }: { equipment: Equipment[] }) {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })
               )}
