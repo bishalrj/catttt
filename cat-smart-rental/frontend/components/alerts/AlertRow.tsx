@@ -3,8 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Calendar, AlertTriangle, Clock, ChevronDown, ChevronRight, ArrowRight, Cpu } from "lucide-react";
+import {
+  Calendar, AlertTriangle, Clock, ChevronDown, ChevronRight,
+  ArrowRight, Cpu, MessageSquare,
+} from "lucide-react";
 import { OverdueAlert } from "@/lib/types";
+import { SendAlertModal, AlertTemplate } from "@/components/notifications/SendAlertModal";
 
 function impactText(alert: OverdueAlert): string {
   if (alert.alert_type === "OVERDUE") {
@@ -31,6 +35,10 @@ export function AlertRow({
   onAcknowledge?: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [alertModalOpen, setAlertModalOpen] = useState(false);
+
+  const defaultTemplate: AlertTemplate =
+    alert.alert_type === "OVERDUE" ? "overdue" : "due_soon";
 
   return (
     <>
@@ -79,16 +87,27 @@ export function AlertRow({
         <td className="text-center">
           {alert.alert_type === "OVERDUE" ? (
             <span className="cat-badge cat-badge-overdue">
-              <AlertTriangle className="w-3 h-3" />
-              OVERDUE
+              <AlertTriangle className="w-3 h-3" /> OVERDUE
             </span>
           ) : (
             <span className="cat-badge cat-badge-maintenance">
-              <Clock className="w-3 h-3" />
-              DUE SOON
+              <Clock className="w-3 h-3" /> DUE SOON
             </span>
           )}
         </td>
+
+        {/* Send Alert button */}
+        <td className="text-center" onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={() => setAlertModalOpen(true)}
+            className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border border-[#25d366]/30 bg-[#25d366]/10 text-[#25d366] hover:bg-[#25d366]/20 transition-all"
+            title="Send WhatsApp Alert"
+          >
+            <MessageSquare className="w-3 h-3" /> Alert
+          </button>
+        </td>
+
+        {/* Acknowledge button */}
         <td className="text-center" onClick={(e) => e.stopPropagation()}>
           {onAcknowledge && (
             <button
@@ -103,7 +122,7 @@ export function AlertRow({
 
       {open && (
         <tr className="bg-[#0a0c10]">
-          <td colSpan={9} className="px-6 py-4">
+          <td colSpan={10} className="px-6 py-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 cat-row-detail">
               <div className="bg-[#131820] p-3.5 rounded-lg border border-[#21293a]">
                 <p className="text-[10px] font-black text-[#5a6a7e] uppercase tracking-wider mb-1.5">Impact Analysis</p>
@@ -113,7 +132,14 @@ export function AlertRow({
                 <p className="text-[10px] font-black text-[#5a6a7e] uppercase tracking-wider mb-1.5">Recommended Action</p>
                 <p className="text-xs text-[#e2e8f0] leading-relaxed">{recommendationText(alert)}</p>
               </div>
-              <div className="flex md:justify-end md:items-center gap-3">
+              <div className="flex md:flex-col md:justify-end gap-2">
+                <button
+                  onClick={() => setAlertModalOpen(true)}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
+                  style={{ background: "#25d366", color: "#fff", boxShadow: "0 0 14px rgba(37,211,102,0.25)" }}
+                >
+                  <MessageSquare className="w-3.5 h-3.5" /> Send WhatsApp Alert
+                </button>
                 {onAcknowledge && (
                   <button onClick={onAcknowledge} className="cat-btn-ghost text-xs">
                     Acknowledge
@@ -127,6 +153,22 @@ export function AlertRow({
           </td>
         </tr>
       )}
+
+      {/* WhatsApp Alert Modal */}
+      <SendAlertModal
+        open={alertModalOpen}
+        onClose={() => setAlertModalOpen(false)}
+        defaultTemplate={defaultTemplate}
+        context={{
+          equipmentId: alert.equipment_id,
+          equipmentType: alert.equipment_type,
+          siteId: alert.site_id,
+          operatorId: alert.last_operator_id,
+          daysOverdue: alert.days_overdue,
+          daysUntilDue: alert.days_until_due,
+          expectedReturnDate: alert.expected_return_date,
+        }}
+      />
     </>
   );
 }

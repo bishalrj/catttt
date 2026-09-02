@@ -6,8 +6,10 @@ import { EquipmentRowActions } from "@/components/equipment/EquipmentRowActions"
 import {
   Truck, Box, Cpu, Activity, Search, Filter,
   ArrowUpDown, ArrowUp, ArrowDown, ChevronDown, ChevronUp,
-  MapPin, Clock, Gauge, User,
+  MapPin, Clock, Gauge, User, MessageSquare,
 } from "lucide-react";
+import { SendAlertModal } from "@/components/notifications/SendAlertModal";
+
 
 const STATUS_BADGE: Record<string, { label: string; className: string }> = {
   AVAILABLE:   { label: "AVAILABLE",   className: "cat-badge cat-badge-available" },
@@ -186,6 +188,10 @@ export function EquipmentTable({ equipment }: { equipment: Equipment[] }) {
                   const idleRatio = eq.engine_hours_per_day > 0
                     ? (eq.idle_hours_per_day / eq.engine_hours_per_day) * 100
                     : 0;
+                  // Determine best alert template
+                  const alertTemplate = eq.status === "OVERDUE" ? "overdue" :
+                    idleRatio > 50 ? "high_idle" :
+                    eq.status === "MAINTENANCE" ? "maintenance" : "damage_risk";
 
                   return (
                     <>
@@ -237,6 +243,16 @@ export function EquipmentTable({ equipment }: { equipment: Equipment[] }) {
                         </td>
                         <td className="text-right" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-end gap-1">
+                            {/* WhatsApp alert button */}
+                            <button
+                              className="cat-btn-icon"
+                              title="Send WhatsApp Alert"
+                              id={`alert-btn-${eq.equipment_id}`}
+                              onClick={() => setExpandedRow(`__alert__${eq.equipment_id}`)}
+                              style={{ borderColor: "rgba(37,211,102,0.3)", color: "#25d366" }}
+                            >
+                              <MessageSquare className="w-3.5 h-3.5" />
+                            </button>
                             <EquipmentRowActions equipmentId={eq.equipment_id} status={eq.status} />
                             <button className="cat-btn-icon" title={isExpanded ? "Collapse" : "Expand"}>
                               {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -244,6 +260,20 @@ export function EquipmentTable({ equipment }: { equipment: Equipment[] }) {
                           </div>
                         </td>
                       </tr>
+
+                      {/* WhatsApp Modal for this row */}
+                      <SendAlertModal
+                        open={expandedRow === `__alert__${eq.equipment_id}`}
+                        onClose={() => setExpandedRow(null)}
+                        defaultTemplate={alertTemplate as import("@/components/notifications/SendAlertModal").AlertTemplate}
+                        context={{
+                          equipmentId: eq.equipment_id,
+                          equipmentType: eq.equipment_type,
+                          siteId: eq.site_id,
+                          operatorId: eq.last_operator_id,
+                          idleRatio,
+                        }}
+                      />
 
                       {/* Expanded detail row */}
                       {isExpanded && (

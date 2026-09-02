@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 
-from app.routers import equipment, dashboard, rentals, alerts, usage_logs, forecast, anomalies, ai, lifecycle
+from app.routers import equipment, dashboard, rentals, alerts, usage_logs, forecast, anomalies, ai, lifecycle, notifications
 
 import os
 
@@ -33,6 +33,7 @@ app.include_router(forecast.router)
 app.include_router(anomalies.router)
 app.include_router(ai.router)
 app.include_router(lifecycle.router)
+app.include_router(notifications.router)
 
 @app.get("/", response_class=HTMLResponse)
 def root_welcome():
