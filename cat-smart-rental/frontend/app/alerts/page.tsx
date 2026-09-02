@@ -1,75 +1,87 @@
 import { getOverdueAlerts } from "@/lib/api";
-import { Bell, Box, AlertTriangle, Clock } from "lucide-react";
-import { AlertRow } from "@/components/alerts/AlertRow";
+import { Bell, AlertTriangle, Clock, Activity, ShieldCheck } from "lucide-react";
+import { AlertsClient } from "@/components/alerts/AlertsClient";
 
 export default async function AlertsPage() {
   try {
     const alerts = await getOverdueAlerts();
-    const overdue = alerts.filter((a) => a.alert_type === "OVERDUE");
-    const dueSoon = alerts.filter((a) => a.alert_type === "DUE_SOON");
+    const overdue  = alerts.filter((a) => a.alert_type === "OVERDUE").length;
+    const dueSoon  = alerts.filter((a) => a.alert_type === "DUE_SOON").length;
+    const health   = Math.max(0, Math.round(100 - (overdue * 15) - (dueSoon * 5)));
 
     return (
-      <div className="max-w-7xl mx-auto space-y-8 cat-page-enter">
+      <div className="max-w-[1400px] mx-auto space-y-6 cat-page-enter">
         {/* Header */}
-        <div className="cat-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-          <div>
-            <h1 className="cat-section-heading text-xl">
-              VisionLink <span className="accent">Overdue &amp; Maintenance Alerts</span>
-            </h1>
-            <p className="text-[#94a3b8] text-xs sm:text-sm mt-1">
-              Automated telemetry monitoring for equipment approaching or exceeding expected return milestones
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <div className="cat-badge cat-badge-overdue text-xs px-3.5 py-1.5 font-mono font-bold">
-              <AlertTriangle className="w-3.5 h-3.5 inline mr-1.5" />
-              {overdue.length} OVERDUE
+        <div className="cat-page-header flex flex-col gap-5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="cat-section-heading text-xl">
+                VisionLink <span className="accent">Alerts</span>
+              </h1>
+              <p className="text-[#8898aa] text-sm mt-1">
+                Automated telemetry monitoring for equipment approaching or exceeding return milestones
+              </p>
             </div>
-            <div className="cat-badge cat-badge-maintenance text-xs px-3.5 py-1.5 font-mono font-bold">
-              <Clock className="w-3.5 h-3.5 inline mr-1.5" />
-              {dueSoon.length} DUE SOON
+            <div className="flex gap-2.5 flex-wrap">
+              <div className="cat-badge cat-badge-overdue text-xs px-3 py-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 inline mr-1" />
+                {overdue} OVERDUE
+              </div>
+              <div className="cat-badge cat-badge-maintenance text-xs px-3 py-1.5">
+                <Clock className="w-3.5 h-3.5 inline mr-1" />
+                {dueSoon} DUE SOON
+              </div>
+            </div>
+          </div>
+
+          {/* Fleet Health Meter */}
+          <div className="bg-[#0d1117] rounded-xl border border-[#21293a] p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase tracking-wider text-[#8898aa] flex items-center gap-2">
+                {health > 80
+                  ? <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  : <Activity className="w-4 h-4 text-amber-400" />
+                }
+                Fleet Health Score
+              </span>
+              <span className={`text-2xl font-black font-mono ${
+                health > 80 ? "text-emerald-400" : health > 60 ? "text-amber-400" : "text-red-400"
+              }`}>
+                {health}
+                <span className="text-sm font-mono text-[#5a6a7e]">/100</span>
+              </span>
+            </div>
+            <div className="h-2.5 bg-[#21293a] rounded-full overflow-hidden">
+              <div
+                className="cat-severity-fill h-full rounded-full"
+                style={{
+                  width: `${health}%`,
+                  background: health > 80
+                    ? "linear-gradient(90deg, #10b981, #34d399)"
+                    : health > 60
+                    ? "linear-gradient(90deg, #f59e0b, #fbbf24)"
+                    : "linear-gradient(90deg, #ef4444, #f87171)",
+                }}
+              />
+            </div>
+            <div className="flex justify-between text-[10px] font-mono text-[#5a6a7e]">
+              <span>CRITICAL</span>
+              <span>WARNING</span>
+              <span>HEALTHY</span>
             </div>
           </div>
         </div>
 
-        {/* Alerts Table Card */}
-        <div className="cat-card overflow-hidden shadow-lg">
-          <div className="overflow-x-auto">
-            <table className="cat-table">
-              <thead>
-                <tr>
-                  <th className="w-10"></th>
-                  <th>Asset ID</th>
-                  <th>Machine Model</th>
-                  <th>Job Site Location</th>
-                  <th>Operator</th>
-                  <th>Expected Return</th>
-                  <th className="text-right">Timeline Delta</th>
-                  <th className="text-center">Alert Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {alerts.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="py-16 text-center text-[#64748b]">
-                      <Box className="w-8 h-8 mx-auto mb-2 text-[#323b49]" />
-                      No overdue or approaching-due equipment right now. All deployments operating on schedule.
-                    </td>
-                  </tr>
-                ) : (
-                  alerts.map((alert) => <AlertRow key={alert.equipment_id} alert={alert} />)
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        {/* Alert list */}
+        <AlertsClient alerts={alerts} />
       </div>
     );
-  } catch (error) {
+  } catch {
     return (
-      <div className="max-w-4xl mx-auto p-10 text-center bg-[#151a21] rounded-lg border border-red-500/40">
-        <h2 className="text-xl font-bold text-red-400 mb-2">Error Loading Alerts</h2>
-        <p className="text-[#94a3b8] text-xs">Could not connect to telemetry feed.</p>
+      <div className="max-w-xl mx-auto mt-20 p-8 text-center bg-[#131820] rounded-xl border border-red-500/30">
+        <Bell className="w-8 h-8 text-red-400 mx-auto mb-3" />
+        <h2 className="text-lg font-bold text-white mb-2">Alert Feed Offline</h2>
+        <p className="text-[#8898aa] text-sm">Could not connect to telemetry feed.</p>
       </div>
     );
   }

@@ -23,17 +23,26 @@ function recommendationText(alert: OverdueAlert): string {
   return `Confirm with ${operator} whether the machine rental needs extension prior to milestone.`;
 }
 
-export function AlertRow({ alert }: { alert: OverdueAlert }) {
+export function AlertRow({
+  alert,
+  onAcknowledge,
+}: {
+  alert: OverdueAlert;
+  onAcknowledge?: () => void;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
       <tr
-        className="hover:bg-[#1a2029] transition-colors cursor-pointer border-b border-[#1e242d]"
+        className="hover:bg-[#161b23] transition-colors cursor-pointer"
         onClick={() => setOpen((o) => !o)}
       >
         <td className="w-8 pl-4">
-          {open ? <ChevronDown className="w-4 h-4 text-[#ffcd11]" /> : <ChevronRight className="w-4 h-4 text-[#64748b]" />}
+          {open
+            ? <ChevronDown className="w-4 h-4 text-[#ffcd11]" />
+            : <ChevronRight className="w-4 h-4 text-[#5a6a7e]" />
+          }
         </td>
         <td className="font-bold">
           <Link
@@ -41,31 +50,29 @@ export function AlertRow({ alert }: { alert: OverdueAlert }) {
             className="text-[#ffcd11] hover:underline font-mono inline-flex items-center gap-1.5 text-xs"
             onClick={(e) => e.stopPropagation()}
           >
-            <Cpu className="w-3.5 h-3.5 text-[#64748b]" />
+            <Cpu className="w-3.5 h-3.5 text-[#5a6a7e]" />
             {alert.equipment_id}
           </Link>
         </td>
         <td className="font-bold text-white text-xs uppercase">{alert.equipment_type}</td>
-        <td className="text-[#94a3b8] font-mono text-xs">{alert.site_id ?? "-"}</td>
-        <td className="text-[#94a3b8] text-xs font-mono">{alert.last_operator_id ?? "-"}</td>
-        <td className="text-[#94a3b8] text-xs font-mono">
+        <td className="text-[#8898aa] font-mono text-xs">{alert.site_id ?? "—"}</td>
+        <td className="text-[#8898aa] text-xs font-mono">{alert.last_operator_id ?? "—"}</td>
+        <td className="text-[#8898aa] text-xs font-mono">
           {alert.expected_return_date ? (
             <div className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-[#64748b]" />
+              <Calendar className="w-3.5 h-3.5 text-[#5a6a7e]" />
               {format(new Date(alert.expected_return_date), "MM/dd/yy HH:mm")}
             </div>
-          ) : (
-            "-"
-          )}
+          ) : "—"}
         </td>
         <td className="text-right font-mono font-bold text-xs">
           {alert.alert_type === "OVERDUE" ? (
             <span className="text-red-400">
-              {alert.days_overdue !== null ? `+${alert.days_overdue} d` : "-"}
+              {alert.days_overdue !== null ? `+${alert.days_overdue} d` : "—"}
             </span>
           ) : (
             <span className="text-amber-400">
-              {alert.days_until_due !== null ? `${alert.days_until_due} d left` : "-"}
+              {alert.days_until_due !== null ? `${alert.days_until_due} d left` : "—"}
             </span>
           )}
         </td>
@@ -82,25 +89,38 @@ export function AlertRow({ alert }: { alert: OverdueAlert }) {
             </span>
           )}
         </td>
+        <td className="text-center" onClick={(e) => e.stopPropagation()}>
+          {onAcknowledge && (
+            <button
+              onClick={onAcknowledge}
+              className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-all"
+            >
+              Ack
+            </button>
+          )}
+        </td>
       </tr>
+
       {open && (
-        <tr className="bg-[#11151b]">
-          <td colSpan={8} className="px-6 py-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-[#181d24] p-3.5 rounded border border-[#262d38]">
-                <p className="text-[10px] font-black text-[#64748b] uppercase tracking-wider mb-1">Impact Analysis</p>
-                <p className="text-xs text-[#f1f5f9] leading-relaxed">{impactText(alert)}</p>
+        <tr className="bg-[#0a0c10]">
+          <td colSpan={9} className="px-6 py-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 cat-row-detail">
+              <div className="bg-[#131820] p-3.5 rounded-lg border border-[#21293a]">
+                <p className="text-[10px] font-black text-[#5a6a7e] uppercase tracking-wider mb-1.5">Impact Analysis</p>
+                <p className="text-xs text-[#e2e8f0] leading-relaxed">{impactText(alert)}</p>
               </div>
-              <div className="bg-[#181d24] p-3.5 rounded border border-[#262d38]">
-                <p className="text-[10px] font-black text-[#64748b] uppercase tracking-wider mb-1">Recommended Action</p>
-                <p className="text-xs text-[#f1f5f9] leading-relaxed">{recommendationText(alert)}</p>
+              <div className="bg-[#131820] p-3.5 rounded-lg border border-[#21293a]">
+                <p className="text-[10px] font-black text-[#5a6a7e] uppercase tracking-wider mb-1.5">Recommended Action</p>
+                <p className="text-xs text-[#e2e8f0] leading-relaxed">{recommendationText(alert)}</p>
               </div>
-              <div className="flex md:justify-end md:items-center">
-                <Link
-                  href={`/equipment/${alert.equipment_id}`}
-                  className="cat-btn-primary text-xs"
-                >
-                  Manage Asset Telematics <ArrowRight className="w-3.5 h-3.5" />
+              <div className="flex md:justify-end md:items-center gap-3">
+                {onAcknowledge && (
+                  <button onClick={onAcknowledge} className="cat-btn-ghost text-xs">
+                    Acknowledge
+                  </button>
+                )}
+                <Link href={`/equipment/${alert.equipment_id}`} className="cat-btn-primary text-xs">
+                  Manage Asset <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>
